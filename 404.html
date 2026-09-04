@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>No Reading — Atlas Weather Station</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Rajdhani:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cyan:#00e5ff; --cyan-dim:#0096a8; --gold:#f0a500; --bg:#070b11;
+  --panel:rgba(255,255,255,0.035); --border:rgba(0,229,255,0.18);
+  --text:#cfe0f0; --text-dim:rgba(207,224,240,0.6); --text-faint:rgba(207,224,240,0.4);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--text);
+  font-family:'Rajdhani',system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
+
+.wrap{min-height:100%;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:22px;text-align:center;gap:20px}
+
+.tag{font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:.28em;
+  color:var(--gold);text-transform:uppercase}
+
+/* 8 biome tiles, matching the real app's "8 worlds surveyed daily" line --
+   the 9th slot (this page) has no biome at all, shown as a dead sensor
+   rather than a copied tile with an X on it. */
+.biomes{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:420px}
+.tile{width:42px;height:42px;border-radius:8px;border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;font-size:16px;
+  background:linear-gradient(135deg,rgba(0,229,255,.12),rgba(0,229,255,.02))}
+.tile.dead{border-color:rgba(255,90,74,.4);background:repeating-linear-gradient(135deg,
+  rgba(255,90,74,.14) 0 3px,transparent 3px 7px);color:transparent;position:relative}
+.tile.dead::after{content:'?';color:#ff8a7a;font-family:'Orbitron',sans-serif}
+
+h1{font-family:'Orbitron',sans-serif;font-weight:700;font-size:clamp(19px,5vw,28px);
+  letter-spacing:.04em;color:#eaf6ff}
+
+.sub{max-width:420px;font-size:15px;line-height:1.6;color:var(--text-dim)}
+.sub b{color:var(--text)}
+.path{font-family:'Orbitron',monospace;font-size:11px;color:var(--text-faint);word-break:break-all}
+
+.actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:2px}
+.btn{font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;text-decoration:none;color:var(--text);background:var(--panel);
+  border:1px solid var(--border);border-radius:8px;padding:11px 20px;
+  transition:background .2s,border-color .2s}
+.btn:hover{background:rgba(0,229,255,.06);border-color:var(--cyan)}
+.btn.primary{border-color:var(--gold);color:var(--gold)}
+.btn.primary:hover{background:rgba(240,165,0,.08)}
+
+.foot{position:fixed;bottom:12px;left:0;right:0;text-align:center;font-size:9px;
+  letter-spacing:.14em;color:var(--text-faint)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="tag">Sensor fault</div>
+
+  <div class="biomes" id="biomes"></div>
+
+  <h1>No reading for this coordinate</h1>
+  <p class="sub">Atlas Weather Station surveys <b>8 charted worlds</b> daily —
+    this page isn't one of them. The link that brought you here doesn't
+    point anywhere real.</p>
+  <p class="path" id="path"></p>
+
+  <div class="actions">
+    <a class="btn primary" href="/">Return to the station</a>
+    <a class="btn" href="https://nms-command-network.netlify.app">Command Network</a>
+  </div>
+</div>
+
+<div class="foot">ATLAS WEATHER STATION — BUILT BY ELEGRA1965</div>
+
+<script>
+document.getElementById('path').textContent = location.pathname || '/';
+(function(){
+  var icons = ["☀️","☁️","⛈️","❄️","⚡","🌫️","☃️","🌋"];
+  var box = document.getElementById('biomes');
+  for(var i=0;i<9;i++){
+    var t = document.createElement('div');
+    if(i<8){ t.className='tile'; t.textContent = icons[i] || '\u2600'; }
+    else { t.className='tile dead'; }
+    box.appendChild(t);
+  }
+})();
+</script>
+</body>
+</html>
