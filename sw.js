@@ -1,144 +1,85 @@
-// Atlas Weather System — Service Worker v1.0
-const CACHE_NAME = 'nms-weather-v41';
+// Atlas Weather Station — Service Worker (v4.0 redesign)
+const CACHE_NAME = 'nms-weather-v45';
 
-// App shell — cache these on install
+// App shell — cached on install (every path here must exist, or install fails)
 const SHELL_ASSETS = [
-  '/',
-  '/index.html',
-  '/Lush.jpg.png',
-  '/Frozen.jpg.png',
-  '/Toxic.jpg.png',
-  '/Radioactive.jpg.png',
-  '/Dead.jpg.png',
-  '/Barren.jpg.png',
-  '/Scorched.jpg.png',
-  '/Volcanic.jpg.png',
-  '/Water Planet.jpg.png',
-  '/warp.gif',
-  '/icons/4.png',
-  '/icons/11.png',
-  '/icons/12.png',
-  '/icons/13.png',
-  '/icons/20.png',
-  '/icons/26.png',
-  '/icons/30.png',
-  '/icons/32.png',
-  '/icons/40.png',
-  '/sentinel.jpg',
-  '/sentinel.png',
-  '/race-gek.png',
-  '/race-korvax.png',
-  '/race-vykeen.png',
-  '/favicon.png',
-  '/favicon-64.png',
-  '/plutonium.webp',
-  '/fuscium.jpg',
-  '/fuscium.png'
+  '/', '/index.html', '/app-v2.js?v=6', '/manifest.json', '/data/haven-worlds.json',
+  '/icon-mark.png', '/icon-192.png', '/icon-512.png', '/favicon.png', '/favicon-64.png', '/apple-touch-icon.png',
+  '/fonts/NMSAlphabet.ttf',
+  '/icons/4.png', '/icons/12.png', '/icons/14.png', '/icons/26.png', '/icons/30.png', '/icons/31.png', '/icons/32.png',
+  '/icons/wiki/hz-heat.webp', '/icons/wiki/hz-cold.webp', '/icons/wiki/hz-radioactive.webp', '/icons/wiki/hz-toxic.webp'
 ];
 
-// API origins — always network-first, fall back to cache
-const API_ORIGINS = [
-  'api.open-meteo.com',
-  'ipapi.co',
-  'nominatim.openstreetmap.org'
-];
-
-// CDN scripts — cache-first (they rarely change)
-const CDN_ORIGINS = [
-  'unpkg.com',
-  'fonts.googleapis.com',
-  'fonts.gstatic.com'
-];
+// APIs — network first, cache fallback (offline shows the last forecast)
+const API_ORIGINS = ['api.open-meteo.com', 'air-quality-api.open-meteo.com', 'geocoding-api.open-meteo.com', 'ipapi.co', 'nominatim.openstreetmap.org'];
+// Fonts — cache first
+const CDN_ORIGINS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 
 self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(SHELL_ASSETS))
-  );
+  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(SHELL_ASSETS)));
   self.skipWaiting();
 });
 
 self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
-    )
-  );
+  event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))));
   self.clients.claim();
 });
 
 self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
 
-  // API calls — network first, cache fallback
-  if (API_ORIGINS.some(o => url.hostname.includes(o))) {
+  if (API_ORIGINS.some(o => url.hostname === o || url.hostname.endsWith('.' + o))) {
     event.respondWith(
-      fetch(event.request)
-        .then(res => {
-          const clone = res.clone();
-          caches.open(CACHE_NAME).then(c => c.put(event.request, clone));
-          return res;
-        })
+      fetch(event.request).then(res => { const c = res.clone(); caches.open(CACHE_NAME).then(x => x.put(event.request, c)); return res; })
         .catch(() => caches.match(event.request))
     );
     return;
   }
 
-  // CDN scripts — cache first
   if (CDN_ORIGINS.some(o => url.hostname.includes(o))) {
     event.respondWith(
-      caches.match(event.request).then(cached => {
-        if (cached) return cached;
-        return fetch(event.request).then(res => {
-          const clone = res.clone();
-          caches.open(CACHE_NAME).then(c => c.put(event.request, clone));
-          return res;
-        });
-      })
+      caches.match(event.request).then(cached => cached || fetch(event.request).then(res => {
+        const c = res.clone(); caches.open(CACHE_NAME).then(x => x.put(event.request, c)); return res;
+      }).catch(() => cached))
     );
     return;
   }
 
-  // Everything else (app shell, images, etc.) — cache first, network fallback, cache the response for next time
-  event.respondWith(
-    caches.match(event.request).then(cached => {
-      if (cached) return cached;
-      return fetch(event.request).then(res => {
-        if (res && res.ok) {
-          const clone = res.clone();
-          caches.open(CACHE_NAME).then(c => c.put(event.request, clone));
-        }
+  // Pages and the daily-worlds data: network first so a new deploy shows straight away
+  if (event.request.mode === 'navigate' || url.pathname.endsWith('.json')) {
+    event.respondWith(
+      fetch(event.request).then(res => {
+        if (res && res.ok) { const c = res.clone(); caches.open(CACHE_NAME).then(x => x.put(event.request, c)); }
         return res;
-      }).catch(() => cached);
-    })
+      }).catch(() => caches.match(event.request).then(c => c || caches.match('/index.html')))
+    );
+    return;
+  }
+
+  // Everything else (images, versioned scripts) — cache first
+  event.respondWith(
+    caches.match(event.request).then(cached => cached || fetch(event.request).then(res => {
+      if (res && res.ok && url.origin === location.origin) { const c = res.clone(); caches.open(CACHE_NAME).then(x => x.put(event.request, c)); }
+      return res;
+    }))
   );
 });
 
-// --- Push notifications ---
-// This listener is inert until a real push subscription + backend exist (see index.html VAPID_PUBLIC_KEY
-// comment for what's needed to activate). Safe to ship now — it simply never fires without a subscription.
+// --- Push notifications (fire once the VAPID key + push backend exist) ---
 self.addEventListener('push', event => {
   let data = {};
-  try { data = event.data ? event.data.json() : {}; }
-  catch (e) { data = { title: '\u25c8 ATLAS WEATHER ALERT', body: event.data ? event.data.text() : '' }; }
-
-  const title = data.title || '\u25c8 ATLAS WEATHER ALERT';
-  const options = {
-    body: data.body || '',
-    icon: data.icon || '/icon-192.png',
-    badge: data.badge || '/icon-192.png',
-    tag: data.tag || 'atlas-weather-alert',
-    data: data.url || '/'
-  };
-  event.waitUntil(self.registration.showNotification(title, options));
+  try { data = event.data ? event.data.json() : {}; } catch (e) { data = { title: '◈ ATLAS WEATHER ALERT', body: event.data ? event.data.text() : '' }; }
+  event.waitUntil(self.registration.showNotification(data.title || '◈ ATLAS WEATHER ALERT', {
+    body: data.body || '', icon: data.icon || '/icon-192.png', badge: '/icon-192.png', tag: data.tag || 'atlas-weather-alert', data: data.url || '/'
+  }));
 });
 
 self.addEventListener('notificationclick', event => {
   event.notification.close();
   const url = event.notification.data || '/';
-  event.waitUntil(
-    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
-      for (const c of list) { if ('focus' in c) return c.focus(); }
-      if (clients.openWindow) return clients.openWindow(url);
-    })
-  );
+  event.waitUntil(clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+    for (const c of list) { if ('focus' in c) return c.focus(); }
+    if (clients.openWindow) return clients.openWindow(url);
+  }));
 });

@@ -1,0 +1,12 @@
+# Internal working docs — not site assets, keep out of git and any deploy
+PLUGINS-TO-INSTALL*
+PROJECT_CONTEXT*
+REVIEW*
+SESSION_UPDATE*
+SHARING*
+TODO*
+
+# OS/editor cruft
+.DS_Store
+Thumbs.db
+*.tmp
