@@ -4,7 +4,7 @@
   "type": "module",
   "description": "NMS Weather: static site plus Netlify functions for closed-app weather alerts",
   "dependencies": {
-    "@netlify/blobs": "^11.1.3",
+    "@netlify/blobs": ">=8.0.0",
     "web-push": "^3.6.7"
   }
 }
