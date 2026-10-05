@@ -17,7 +17,7 @@
   var HD = function (k) { return '/hd/hd-' + k + '.jpg'; };
   var CARD = function (k) { return '/hd/card-' + k + '.jpg'; };
   var WX_ICON = { sun: '/icons/32.png', moon: '/icons/31.png', cloud: '/icons/26.png', partly: '/icons/30.png', rain: '/icons/12.png', storm: '/icons/4.png', snow: '/icons/14.png', fog: '/icons/26.png' };
-  var HAZ_ICON = { heat: '/icons/wiki/hz-heat.webp', cold: '/icons/wiki/hz-cold.webp', rad: '/icons/wiki/hz-radioactive.webp', tox: '/icons/wiki/hz-toxic.webp' };
+  var HAZ_ICON = { heat: '/icons/hz-tile-heat.webp', cold: '/icons/hz-tile-cold.webp', rad: '/icons/hz-tile-radioactive.webp', tox: '/icons/hz-tile-toxic.webp' };
   var RES = {
     'Star Bulb': '/plant-star-bulb-hot.webp', 'Faecium': '/plant-star-bulb.webp', 'Frost Crystal': '/plant-frost-crystal.webp', 'Frozen Tubers': '/plant-frozen-tubers.webp',
     'Fungal Mould': '/plant-fungal-mould.webp', 'Solanium': '/plant-solanium.webp', 'Gamma Root': '/plant-gamma-root.webp', 'Kelp Sac': '/plant-kelp-sac.webp',
@@ -246,7 +246,7 @@
     ];
     $('hazRows').innerHTML = rows.map(function (r) {
       var hw = hazWord(r[2]);
-      return '<div class="haz-row"><span class="haz-ic" aria-hidden="true" style="color:' + hw[1] + ';box-shadow:0 0 10px ' + hw[2] + ',inset 0 0 8px ' + hw[2] + '"><span style="--m:url(\'' + r[3] + '\')"></span></span>' +
+      return '<div class="haz-row"><img class="haz-ic" src="' + r[3] + '" alt="" aria-hidden="true">' +
         '<div style="grid-area:nm;line-height:1.2;min-width:0"><div style="font-family:var(--disp);font-size:12px;font-weight:700;letter-spacing:1.5px;color:var(--white);text-transform:uppercase">' + r[0] + '</div><div style="font-size:13.5px;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(r[1]) + '</div></div>' +
         '<div class="haz-bar"><div style="width:' + Math.max(4, r[2]) + '%;background:repeating-linear-gradient(90deg,' + hw[1] + ' 0 8px,transparent 8px 10px);box-shadow:0 0 10px ' + hw[1] + '"></div></div>' +
         '<div class="mono" style="grid-area:wd;font-size:13px;letter-spacing:1px;color:' + hw[1] + ';text-align:right">' + hw[0] + ' <span style="color:var(--text-dim)">' + r[2] + '%</span></div></div>';

@@ -168,9 +168,8 @@ img{max-width:100%}
 .haz{flex:1 1 380px;min-width:0;display:flex;flex-direction:column;gap:14px}
 #hazRows{flex:1}
 #hazRows .haz-row{flex:1}
-.haz-row{display:grid;grid-template-columns:40px minmax(0,1fr) auto;grid-template-areas:"ic nm wd" "bar bar bar";align-content:center;align-items:center;gap:10px 12px;padding:12px 14px;border-radius:10px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05)}
-.haz-ic{grid-area:ic;width:40px;height:40px;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center}
-.haz-ic span{width:23px;height:23px;background:currentColor;-webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat}
+.haz-row{display:grid;grid-template-columns:48px minmax(0,1fr) auto;grid-template-areas:"ic nm wd" "bar bar bar";align-content:center;align-items:center;gap:10px 12px;padding:12px 14px;border-radius:10px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05)}
+.haz-ic{grid-area:ic;width:48px;height:48px;display:block;object-fit:contain}
 .haz-bar{grid-area:bar;height:12px;border-radius:3px;background:rgba(255,255,255,.05);overflow:hidden;border:1px solid rgba(255,255,255,.05)}
 .haz-bar div{height:100%;transition:width .8s}
 .shield{position:relative;width:92px;height:92px;flex-shrink:0}
@@ -548,6 +547,6 @@ body.no-fx .fx{display:none!important}
 </div>
 <div id="toast" role="status" aria-live="polite"></div>
 
-<script src="/app-v2.js?v=7"></script>
+<script src="/app-v2.js?v=8"></script>
 </body>
 </html>
