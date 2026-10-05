@@ -466,7 +466,7 @@
     $('nextWorld').onclick = function () { selectWorld((S.world + 1) % S.worlds.length); };
   }
 
-  // ---------- rain radar (RainViewer frames on a dark CARTO base map) ----------
+  // ---------- rain radar (RainViewer frames on Esri's dark grey base map) ----------
   var RD = { host: '', frames: [], i: 0, timer: null, key: '', playing: true, z: 7 };
   function rdTile(lat, lon, z) {
     var n = Math.pow(2, z), r = lat * Math.PI / 180;
@@ -494,8 +494,9 @@
       if (ty < 0 || ty >= n) continue;
       for (var tx = Math.floor(tlx / 256); tx <= Math.floor((tlx + W) / 256); tx++) tiles.push([((tx % n) + n) % n, ty, Math.round(tx * 256 - tlx), Math.round(ty * 256 - tly)]);
     }
-    var sub = 'abcd';
-    $('rdBase').innerHTML = tiles.map(function (t, k) { return '<img alt="" src="https://' + sub[k % 4] + '.basemaps.cartocdn.com/dark_all/' + z + '/' + t[0] + '/' + t[1] + '.png" style="left:' + t[2] + 'px;top:' + t[3] + 'px">'; }).join('');
+    var esri = function (layer, t) { return '<img alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/' + layer + '/MapServer/tile/' + z + '/' + t[1] + '/' + t[0] + '" style="left:' + t[2] + 'px;top:' + t[3] + 'px">'; };
+    $('rdBase').innerHTML = tiles.map(function (t) { return esri('World_Dark_Gray_Base', t); }).join('');
+    $('rdLabels').innerHTML = tiles.map(function (t) { return esri('World_Dark_Gray_Reference', t); }).join('');
     $('rdRain').innerHTML = RD.frames.map(function (f, fi) {
       return '<div class="rd-f" data-i="' + fi + '">' + tiles.map(function (t) { return '<img alt="" loading="eager" src="' + RD.host + f.path + '/256/' + z + '/' + t[0] + '/' + t[1] + '/2/1_1.png" style="left:' + t[2] + 'px;top:' + t[3] + 'px">'; }).join('') + '</div>';
     }).join('');

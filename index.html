@@ -312,7 +312,7 @@ body.no-fx .fx{display:none!important}
 .rd-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px}
 .rd-map{position:relative;height:360px;margin-top:14px;border-radius:12px;overflow:hidden;background:#0b1119;border:1px solid rgba(0,229,255,.18)}
 .rd-map img{position:absolute;width:256px;height:256px;max-width:none;user-select:none;pointer-events:none}
-.rd-base img{filter:brightness(1.25) saturate(.6)}
+.rd-base img{filter:brightness(.9)}
 .rd-f{position:absolute;inset:0;opacity:0;transition:opacity .3s}
 .rd-f.on{opacity:.9}
 .rd-sweep{position:absolute;left:50%;top:50%;width:160%;aspect-ratio:1;transform:translate(-50%,-50%);background:conic-gradient(from 0deg,rgba(0,229,255,.16),transparent 55deg);border-radius:50%;animation:rdsweep 7s linear infinite;pointer-events:none}
@@ -327,7 +327,7 @@ body.no-fx .fx{display:none!important}
 .rd-play{min-width:44px;height:40px;border-radius:8px;border:1px solid rgba(0,229,255,.35);background:rgba(0,229,255,.08);color:var(--cyan);font-size:15px;cursor:pointer}
 .rd-time{font-family:var(--mono);font-size:13px;letter-spacing:1px;color:var(--white);min-width:118px;text-align:right}
 .rd-key{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:1px;color:var(--text-dim)}
-.rd-key i{display:block;width:90px;height:8px;border-radius:4px;background:linear-gradient(90deg,#8fd3ff,#3a8dff,#2e5bff,#c23cff,#ff3a7a)}
+.rd-key i{display:block;width:90px;height:8px;border-radius:4px;background:linear-gradient(90deg,#e8d9a8,#9ccfff,#2f74ff,#b03cff,#ff3a7a)}
 .rd-credit{margin-top:10px;font-size:12.5px;color:var(--text-dim)}
 body.no-fx .rd-sweep,body.no-fx .rd-pin::after{animation:none;display:none}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.scan-img .sharp{clip-path:none}}
@@ -541,6 +541,7 @@ body.no-fx .rd-sweep,body.no-fx .rd-pin::after{animation:none;display:none}
     <div class="rd-map" id="radarMap">
       <div class="rd-base" id="rdBase"></div>
       <div id="rdRain"></div>
+      <div id="rdLabels"></div>
       <div class="rd-ring" style="width:140px;height:140px"></div><div class="rd-ring" style="width:280px;height:280px"></div>
       <div class="rd-sweep" aria-hidden="true"></div>
       <span class="rd-pin" aria-hidden="true"></span>
@@ -551,7 +552,7 @@ body.no-fx .rd-sweep,body.no-fx .rd-pin::after{animation:none;display:none}
       <input type="range" id="rdSlider" min="0" max="0" value="0" aria-label="Radar time">
       <span class="rd-time" id="rdTime">--:--</span>
     </div>
-    <div class="rd-credit">Radar by <a href="https://www.rainviewer.com" target="_blank" rel="noopener">RainViewer</a> · Map © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a></div>
+    <div class="rd-credit">Radar by <a href="https://www.rainviewer.com" target="_blank" rel="noopener">RainViewer</a> · Map © <a href="https://www.esri.com" target="_blank" rel="noopener">Esri</a>, HERE, Garmin, © OpenStreetMap contributors</div>
   </section>
 
   <!-- survey -->
@@ -595,6 +596,6 @@ body.no-fx .rd-sweep,body.no-fx .rd-pin::after{animation:none;display:none}
 </div>
 <div id="toast" role="status" aria-live="polite"></div>
 
-<script src="/app-v2.js?v=10"></script>
+<script src="/app-v2.js?v=11"></script>
 </body>
 </html>
