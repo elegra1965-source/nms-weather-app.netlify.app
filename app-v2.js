@@ -499,12 +499,19 @@
     $('rdBase').innerHTML = tiles.map(function (t) { return esri('World_Dark_Gray_Base', t); }).join('');
     $('rdLabels').innerHTML = tiles.map(function (t) { return esri('World_Dark_Gray_Reference', t); }).join('');
     $('rdRain').innerHTML = RD.frames.map(function (f, fi) {
-      return '<div class="rd-f" data-i="' + fi + '">' + tiles.map(function (t) { return '<img alt="" loading="eager" src="' + RD.host + f.path + '/256/' + z + '/' + t[0] + '/' + t[1] + '/2/1_1.png" style="left:' + t[2] + 'px;top:' + t[3] + 'px">'; }).join('') + '</div>';
+      return '<div class="rd-f" data-i="' + fi + '">' + tiles.map(function (t) { return '<img alt="" loading="eager" src="' + RD.host + f.path + '/256/' + z + '/' + t[0] + '/' + t[1] + '/2/1_1.png" onerror="rdTileErr(this)" style="left:' + t[2] + 'px;top:' + t[3] + 'px">'; }).join('') + '</div>';
     }).join('');
     $('rdMsg').style.display = 'none';
     var sl = $('rdSlider'); sl.max = RD.frames.length - 1;
     showRadarFrame(RD.frames.length - 1); startRadar();
   }
+  // RainViewer sometimes hasn't finished rendering the newest frame's tiles yet: hide the
+  // broken-image icon and retry once a few seconds later instead of showing a white box
+  window.rdTileErr = function (img) {
+    img.style.visibility = 'hidden';
+    if (img.dataset.retry) return; img.dataset.retry = '1';
+    setTimeout(function () { img.onload = function () { img.style.visibility = ''; }; img.src = img.src.split('?')[0] + '?r=' + Date.now(); }, 4000);
+  };
   function showRadarFrame(i) {
     RD.i = i;
     $('rdRain').querySelectorAll('.rd-f').forEach(function (el) { el.classList.toggle('on', +el.getAttribute('data-i') === i); });
