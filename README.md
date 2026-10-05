@@ -1,2 +1,46 @@
-# nms-weather-app.netlify.app
-This a weather app with No Man's Sky Theme it gives real time weather and also planets in the No Man's Sky universe 
+# NMS Weather — real weather as a No Man's Sky planet scan
+
+**Live:** [weather.nomansskyhub.app](https://weather.nomansskyhub.app)
+
+A free weather app themed on *No Man's Sky*. Your real local forecast shows up as an in-game style planet scan: the weather picks a biome, and the sky, effects and exosuit hazard readings follow it. No account, no ads, and it installs as an app on phones and desktops.
+
+Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
+
+## What it does
+
+- **Live weather as a biome.** Storms read as Extreme, snow or freezing as Frozen, rain or fog as Marsh, heat as Scorched, poor air as Toxic, high UV as Radioactive, clear nights as Barren, and everything else as Lush. The hero sky, rain/snow/lightning effects and planet image all change to match.
+- **Exosuit hazard protection.** Heat, cold, UV and air quality shown as shield bars using the game's own hazard icons.
+- **Forecast.** Next 24 hours (temperature, rain and wind charts with sunrise/sunset), a 7-day range view, and 9 tiles: wind compass, UV, sun path, feels like, humidity and dew point, pressure trend, visibility, rain and air quality.
+- **Storm warnings.** An in-game style "Extreme weather approaching" banner with a countdown.
+- **Daily planetary survey.** 8 real planets charted by players on [Voyager's Haven](https://havenmap.online), one for each biome, changing each day. Every scan shows the portal address as glyphs, the discoverer, resources, and a link to open the system on the [NMS Galactic Map](https://map.nomansskyhub.app).
+- **Alerts** (while the app is open or in the background): rain soon, extreme weather, big temperature changes, a morning briefing and the new daily survey.
+- **Search or Scan.** Type a city, or press Scan with the box empty to find your location. Share a city with `?city=London`.
+- °C/°F, 12/24-hour clock and an effects on/off switch for battery or motion sensitivity.
+
+## How it's built
+
+A plain HTML/CSS/JavaScript site with no build step and no framework. Deployed on Netlify straight from this repo.
+
+| File | What it is |
+|---|---|
+| `index.html` | Page layout and styles |
+| `app-v2.js` | All the app logic: weather fetch, biome rules, charts, survey, alerts |
+| `sw.js` | Service worker for offline use and notifications |
+| `data/haven-worlds.json` | Snapshot of real planets from Voyager's Haven used by the daily survey |
+| `icons/`, `hd/`, `glyphs/`, `fonts/` | Weather icons, planet images, portal glyphs, NMS alphabet font |
+
+## Data and credits
+
+- Weather and air quality: [Open-Meteo](https://open-meteo.com) (free, no key)
+- Place search: [OpenStreetMap Nominatim](https://nominatim.openstreetmap.org), with Open-Meteo geocoding as a fallback
+- Survey planets: [Voyager's Haven](https://havenmap.online), with credit to each planet's discoverer
+- Hazard and resource icons and planet images: the [No Man's Sky Wiki](https://nomanssky.fandom.com)
+- NMS Alphabet font by seontonppa (built with FontStruct), used with permission
+
+## Licence
+
+The code is MIT licensed (see `LICENSE`). Game names, icons, glyphs and imagery belong to Hello Games and are not covered by that licence.
+
+*An unofficial, fan-made project. Not affiliated with, sponsored by, or endorsed by Hello Games.*
+
+Built by elegra1965.
