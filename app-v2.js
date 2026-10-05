@@ -473,7 +473,8 @@
     return [(lon + 180) / 360 * n * 256, (1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * n * 256];
   }
   function fetchRadar() {
-    return fetch('https://api.rainviewer.com/public/weather-maps.json').then(function (r) { return r.json(); }).then(function (d) {
+    RD.fetchedAt = Date.now();
+    return fetch('https://api.rainviewer.com/public/weather-maps.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (d) {
       var fr = (d.radar && d.radar.past || []).concat(d.radar && d.radar.nowcast || []);
       if (!fr.length) throw new Error('no frames');
       var changed = !RD.frames.length || fr[fr.length - 1].time !== RD.frames[RD.frames.length - 1].time;
@@ -511,7 +512,11 @@
     var f = RD.frames[i]; if (!f) return;
     var off = S.wx ? S.wx.tzOffset : -new Date().getTimezoneOffset() * 60, t = new Date((f.time + off) * 1000);
     var ago = Math.round((Date.now() / 1000 - f.time) / 60);
-    $('rdTime').textContent = pad(t.getUTCHours()) + ':' + pad(t.getUTCMinutes()) + (i === RD.frames.length - 1 ? ' · LATEST' : ' · −' + ago + ' MIN');
+    // "LATEST" only when the newest frame really is recent; otherwise say how old it is
+    var stale = i === RD.frames.length - 1 && ago > 30;
+    $('rdTime').textContent = pad(t.getUTCHours()) + ':' + pad(t.getUTCMinutes()) +
+      (i === RD.frames.length - 1 ? (stale ? ' · ' + (ago >= 120 ? Math.round(ago / 60) + 'H' : ago + ' MIN') + ' OLD' : ' · LATEST') : ' · −' + ago + ' MIN');
+    if (stale && Date.now() - (RD.fetchedAt || 0) > 60000) fetchRadar(); // phone woke up with old frames — refresh
   }
   function startRadar() {
     clearTimeout(RD.timer);
@@ -523,6 +528,14 @@
       RD.timer = setTimeout(function () { showRadarFrame(last ? 0 : RD.i + 1); step(); }, last ? 1800 : 550);
     })();
   }
+  $('rdRefresh').onclick = function () {
+    var b = this; b.classList.remove('spin'); void b.offsetWidth; b.classList.add('spin');
+    var before = RD.frames.length ? RD.frames[RD.frames.length - 1].time : 0;
+    fetchRadar().then(function () {
+      var now = RD.frames.length ? RD.frames[RD.frames.length - 1].time : 0;
+      toast(now && now !== before ? '✓ Radar updated' : '✓ Radar is up to date');
+    });
+  };
   $('rdPlay').onclick = function () { RD.playing = !RD.playing; if (RD.playing && !S.fx) toast('Turn effects on to animate the radar'); startRadar(); };
   $('rdSlider').oninput = function () { RD.playing = false; startRadar(); showRadarFrame(+this.value); };
   var rdResize = null;
@@ -678,6 +691,9 @@
   document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible' && S.loc && S.updated && Date.now() - S.updated > 10 * 60 * 1000) load(S.loc, true); });
   setInterval(updateClockAndAge, 1000);
   fetchRadar(); setInterval(fetchRadar, 10 * 60 * 1000);
+  // phones pause timers in the background: refresh the radar as soon as the app is visible again
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible' && Date.now() - (RD.fetchedAt || 0) > 2 * 60 * 1000) fetchRadar(); });
+  window.addEventListener('pageshow', function (e) { if (e.persisted) fetchRadar(); });
 
   // boot
   setFx(S.fx); setUnit(S.unit); renderPerm();
