@@ -6,6 +6,8 @@ A free weather app themed on *No Man's Sky*. Your real local forecast shows up a
 
 Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 
+![NMS Weather: live London weather as a planet scan](screenshots/01-hero.jpg)
+
 ## What it does
 
 - **Live weather as a biome.** Storms read as Extreme, snow or freezing as Frozen, rain or fog as Marsh, heat as Scorched, poor air as Toxic, high UV as Radioactive, clear nights as Barren, and everything else as Lush. The hero sky, rain/snow/lightning effects and planet image all change to match.
@@ -17,6 +19,8 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 - **Alerts, even when the app is closed:** rain soon, extreme weather, big temperature changes, a morning briefing and the new daily survey. A scheduled Netlify function checks the forecast every 30 minutes. See the [privacy page](https://weather.nomansskyhub.app/privacy.html) for what is stored and how to remove it.
 - **Search or Scan.** Type a city, or press Scan with the box empty to find your location. Share a city with `?city=London`.
 - °C/°F, 12/24-hour clock and an effects on/off switch for battery or motion sensitivity.
+
+![Daily planetary survey: a real player-charted world with portal glyphs and hex address](screenshots/02-planetary-survey.jpg)
 
 ## How it's built
 
