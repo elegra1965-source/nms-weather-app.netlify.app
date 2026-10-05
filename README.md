@@ -11,6 +11,7 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 - **Live weather as a biome.** Storms read as Extreme, snow or freezing as Frozen, rain or fog as Marsh, heat as Scorched, poor air as Toxic, high UV as Radioactive, clear nights as Barren, and everything else as Lush. The hero sky, rain/snow/lightning effects and planet image all change to match.
 - **Exosuit hazard protection.** Heat, cold, UV and air quality shown as shield bars using the game's own hazard icons.
 - **Forecast.** Next 24 hours (temperature, rain and wind charts with sunrise/sunset), a 7-day range view, and 9 tiles: wind compass, UV, sun path, feels like, humidity and dew point, pressure trend, visibility, rain and air quality.
+- **Rain radar.** An animated map of the last two hours of rain and snow around you, with play/pause and a time slider (radar by [RainViewer](https://www.rainviewer.com), map by CARTO/OpenStreetMap).
 - **Storm warnings.** An in-game style "Extreme weather approaching" banner with a countdown.
 - **Daily planetary survey.** 8 real planets charted by players on [Voyager's Haven](https://havenmap.online), one for each biome, changing each day. Every scan shows the portal address as glyphs, the discoverer, resources, and a link to open the system on the [NMS Galactic Map](https://map.nomansskyhub.app).
 - **Alerts, even when the app is closed:** rain soon, extreme weather, big temperature changes, a morning briefing and the new daily survey. A scheduled Netlify function checks the forecast every 30 minutes. See the [privacy page](https://weather.nomansskyhub.app/privacy.html) for what is stored and how to remove it.
@@ -35,6 +36,7 @@ A plain HTML/CSS/JavaScript site with no build step and no framework, plus two s
 ## Data and credits
 
 - Weather and air quality: [Open-Meteo](https://open-meteo.com) (free, no key)
+- Rain radar: [RainViewer](https://www.rainviewer.com); base map © OpenStreetMap contributors © CARTO
 - Place search: [OpenStreetMap Nominatim](https://nominatim.openstreetmap.org), with Open-Meteo geocoding as a fallback
 - Survey planets: [Voyager's Haven](https://havenmap.online), with credit to each planet's discoverer
 - Hazard and resource icons and planet images: the [No Man's Sky Wiki](https://nomanssky.fandom.com)

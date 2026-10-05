@@ -212,7 +212,7 @@
     $('atlasLine').textContent = atlasLine(w, b, S.aqi);
     $('tagClass').textContent = 'CLASS · ' + b.cls;
     document.title = cv(w.temp) + '° ' + (WMO[w.code] || '') + ' · ' + w.city + ' — Atlas Weather Station';
-    renderRing(w); renderHazards(w); renderHourly(); renderDays(w); renderTiles(w); renderStorm(w); renderShare(w);
+    renderRing(w); renderHazards(w); renderHourly(); renderDays(w); renderTiles(w); renderStorm(w); renderShare(w); renderRadar();
     updateClockAndAge();
   }
 
@@ -466,6 +466,67 @@
     $('nextWorld').onclick = function () { selectWorld((S.world + 1) % S.worlds.length); };
   }
 
+  // ---------- rain radar (RainViewer frames on a dark CARTO base map) ----------
+  var RD = { host: '', frames: [], i: 0, timer: null, key: '', playing: true, z: 7 };
+  function rdTile(lat, lon, z) {
+    var n = Math.pow(2, z), r = lat * Math.PI / 180;
+    return [(lon + 180) / 360 * n * 256, (1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * n * 256];
+  }
+  function fetchRadar() {
+    return fetch('https://api.rainviewer.com/public/weather-maps.json').then(function (r) { return r.json(); }).then(function (d) {
+      var fr = (d.radar && d.radar.past || []).concat(d.radar && d.radar.nowcast || []);
+      if (!fr.length) throw new Error('no frames');
+      var changed = !RD.frames.length || fr[fr.length - 1].time !== RD.frames[RD.frames.length - 1].time;
+      RD.host = d.host; RD.frames = fr;
+      if (changed) { RD.key = ''; renderRadar(); }
+    }).catch(function (e) { console.warn('radar', e); if (!RD.frames.length) $('rdMsg').textContent = 'RADAR OFFLINE · try again later'; });
+  }
+  function renderRadar() {
+    var map = $('radarMap'); if (!map || !S.loc) return;
+    var W = map.clientWidth, H = map.clientHeight; if (!W || !H) return;
+    if (S.wx) $('radarSub').textContent = 'The last two hours of rain and snow around ' + S.wx.city;
+    if (!RD.frames.length) return;
+    var key = S.loc.lat + ',' + S.loc.lon + ',' + W + 'x' + H + ',' + RD.frames[RD.frames.length - 1].time;
+    if (key === RD.key) return; RD.key = key;
+    var z = RD.z, n = Math.pow(2, z), c = rdTile(S.loc.lat, S.loc.lon, z), tlx = c[0] - W / 2, tly = c[1] - H / 2;
+    var tiles = [];
+    for (var ty = Math.floor(tly / 256); ty <= Math.floor((tly + H) / 256); ty++) {
+      if (ty < 0 || ty >= n) continue;
+      for (var tx = Math.floor(tlx / 256); tx <= Math.floor((tlx + W) / 256); tx++) tiles.push([((tx % n) + n) % n, ty, Math.round(tx * 256 - tlx), Math.round(ty * 256 - tly)]);
+    }
+    var sub = 'abcd';
+    $('rdBase').innerHTML = tiles.map(function (t, k) { return '<img alt="" src="https://' + sub[k % 4] + '.basemaps.cartocdn.com/dark_all/' + z + '/' + t[0] + '/' + t[1] + '.png" style="left:' + t[2] + 'px;top:' + t[3] + 'px">'; }).join('');
+    $('rdRain').innerHTML = RD.frames.map(function (f, fi) {
+      return '<div class="rd-f" data-i="' + fi + '">' + tiles.map(function (t) { return '<img alt="" loading="eager" src="' + RD.host + f.path + '/256/' + z + '/' + t[0] + '/' + t[1] + '/2/1_1.png" style="left:' + t[2] + 'px;top:' + t[3] + 'px">'; }).join('') + '</div>';
+    }).join('');
+    $('rdMsg').style.display = 'none';
+    var sl = $('rdSlider'); sl.max = RD.frames.length - 1;
+    showRadarFrame(RD.frames.length - 1); startRadar();
+  }
+  function showRadarFrame(i) {
+    RD.i = i;
+    $('rdRain').querySelectorAll('.rd-f').forEach(function (el) { el.classList.toggle('on', +el.getAttribute('data-i') === i); });
+    $('rdSlider').value = i;
+    var f = RD.frames[i]; if (!f) return;
+    var off = S.wx ? S.wx.tzOffset : -new Date().getTimezoneOffset() * 60, t = new Date((f.time + off) * 1000);
+    var ago = Math.round((Date.now() / 1000 - f.time) / 60);
+    $('rdTime').textContent = pad(t.getUTCHours()) + ':' + pad(t.getUTCMinutes()) + (i === RD.frames.length - 1 ? ' · LATEST' : ' · −' + ago + ' MIN');
+  }
+  function startRadar() {
+    clearTimeout(RD.timer);
+    var anim = RD.playing && S.fx && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    $('rdPlay').textContent = anim ? '❚❚' : '▶'; $('rdPlay').setAttribute('aria-label', anim ? 'Pause radar animation' : 'Play radar animation');
+    if (!anim || RD.frames.length < 2) return;
+    (function step() {
+      var last = RD.i >= RD.frames.length - 1;
+      RD.timer = setTimeout(function () { showRadarFrame(last ? 0 : RD.i + 1); step(); }, last ? 1800 : 550);
+    })();
+  }
+  $('rdPlay').onclick = function () { RD.playing = !RD.playing; if (RD.playing && !S.fx) toast('Turn effects on to animate the radar'); startRadar(); };
+  $('rdSlider').oninput = function () { RD.playing = false; startRadar(); showRadarFrame(+this.value); };
+  var rdResize = null;
+  window.addEventListener('resize', function () { clearTimeout(rdResize); rdResize = setTimeout(renderRadar, 250); });
+
   // ---------- alerts ----------
   var ALERT_ROWS = [
     ['rain', '🌧', 'Rain starting soon', 'A heads-up before rain or snow starts where you are'],
@@ -578,6 +639,7 @@
     S.fx = on; lsSet('atlas-fx', on); document.body.classList.toggle('no-fx', !on);
     $('fxBtn').classList.toggle('off', !on); $('fxBtn').setAttribute('aria-pressed', on); $('fxLabel').textContent = on ? 'EFFECTS ON' : 'EFFECTS OFF';
     if (S.wx) { var b = translate(S.wx, S.aqi); $('hero').setAttribute('data-fx', on ? b.fx : ''); }
+    if (typeof startRadar === 'function' && RD.frames.length) startRadar();
   }
   $('searchForm').addEventListener('submit', function (e) {
     e.preventDefault(); var q = $('loc').value.trim();
@@ -614,6 +676,7 @@
   setInterval(function () { if (S.loc) load(S.loc, true); }, 15 * 60 * 1000);
   document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible' && S.loc && S.updated && Date.now() - S.updated > 10 * 60 * 1000) load(S.loc, true); });
   setInterval(updateClockAndAge, 1000);
+  fetchRadar(); setInterval(fetchRadar, 10 * 60 * 1000);
 
   // boot
   setFx(S.fx); setUnit(S.unit); renderPerm();
