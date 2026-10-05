@@ -260,7 +260,8 @@ img{max-width:100%}
 .glyphs span{width:30px;height:30px;flex-shrink:0;border-radius:6px;background:rgba(0,229,255,.07);border:1px solid rgba(0,229,255,.22);display:flex;align-items:center;justify-content:center}
 .glyphs img{width:82%;height:82%;object-fit:contain;filter:drop-shadow(0 0 4px rgba(0,229,255,.9))}
 .hex{font-family:var(--mono);font-size:18px;letter-spacing:4px;color:var(--cyan);text-shadow:0 0 10px rgba(0,229,255,.5);display:flex;align-items:center;gap:10px}
-.copy{border:1px solid rgba(0,229,255,.3);background:transparent;color:var(--cyan);border-radius:6px;font-family:var(--mono);font-size:11px;letter-spacing:1px;padding:2px 8px;cursor:pointer}
+.copy{border:1px solid rgba(0,229,255,.3);background:transparent;color:var(--cyan);border-radius:6px;font-family:var(--mono);font-size:12px;letter-spacing:1px;padding:8px 14px;min-height:40px;cursor:pointer}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .scan-info{flex:1 1 380px;min-width:0;padding:24px;display:flex;flex-direction:column;gap:14px}
 .cells{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .cell{padding:10px 12px;border-radius:10px;background:var(--panel);border:1px solid var(--border-soft)}
@@ -332,6 +333,7 @@ body.no-fx .fx{display:none!important}
 </style>
 </head>
 <body>
+<h1 class="sr-only">Atlas Weather Station — your real weather as a No Man's Sky planet scan</h1>
 <div class="atm atm-grid" aria-hidden="true"></div>
 <div class="atm atm-orb1" aria-hidden="true"></div>
 <div class="atm atm-orb2" aria-hidden="true"></div>
@@ -516,7 +518,7 @@ body.no-fx .fx{display:none!important}
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:stretch">
         <div class="badge" style="border:1px solid rgba(0,255,136,.35);background:rgba(0,255,136,.05);color:var(--green);display:flex;flex-direction:column;justify-content:center">● REAL WORLDS<span style="color:rgba(207,224,240,.65);letter-spacing:1px">VOYAGER'S HAVEN</span></div>
-        <div class="badge" style="border:1px solid rgba(255,140,0,.35);background:rgba(255,140,0,.06);color:var(--orange);text-align:right">NEW SURVEY IN<br><span id="surveyCd" style="font-size:20px;color:var(--white)">--:--:--</span> <span style="color:var(--text-dim)">UTC</span></div>
+        <div class="badge" style="border:1px solid rgba(255,140,0,.35);background:rgba(255,140,0,.06);color:var(--orange);text-align:right">NEW SURVEY IN<br><span id="surveyCd" style="font-size:20px;color:var(--white)">--h --m --s</span></div>
       </div>
     </div>
     <div class="cards" id="cards" role="listbox" aria-label="Worlds"></div>
@@ -547,6 +549,6 @@ body.no-fx .fx{display:none!important}
 </div>
 <div id="toast" role="status" aria-live="polite"></div>
 
-<script src="/app-v2.js?v=8"></script>
+<script src="/app-v2.js?v=9"></script>
 </body>
 </html>

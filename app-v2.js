@@ -162,6 +162,7 @@
     return Promise.all([fetchWeather(loc.lat, loc.lon, loc.city), fetchAQI(loc.lat, loc.lon)]).then(function (res) {
       S.wx = res[0]; S.wx.country = loc.country || ''; S.aqi = res[1]; S.loc = loc; S.updated = Date.now();
       lsSet('atlas-last-loc', loc);
+      try { var named = loc.city && !/^your /i.test(loc.city); history.replaceState(null, '', named ? '/?city=' + encodeURIComponent(loc.city) : '/'); } catch (e) {}
       render(); status(''); checkAlerts(); syncPush();
     }).catch(function (e) { console.warn(e); status('SIGNAL LOST — check your connection and try again', true); })
       .then(function () { busy = false; if (pending) { var p = pending; pending = null; load(p[0], p[1]); } });
@@ -251,7 +252,7 @@
         '<div class="haz-bar"><div style="width:' + Math.max(4, r[2]) + '%;background:repeating-linear-gradient(90deg,' + hw[1] + ' 0 8px,transparent 8px 10px);box-shadow:0 0 10px ' + hw[1] + '"></div></div>' +
         '<div class="mono" style="grid-area:wd;font-size:13px;letter-spacing:1px;color:' + hw[1] + ';text-align:right">' + hw[0] + ' <span style="color:var(--text-dim)">' + r[2] + '%</span></div></div>';
     }).join('');
-    var worst = Math.max(heat, cold, rad, tox), pw = hazWord(worst), protect = Math.round(100 - worst * 0.45);
+    var worst = Math.max(heat, cold, rad, tox), pw = hazWord(worst), protect = worst < 25 ? 100 : Math.round(100 - (worst - 25) * 0.6);
     $('protect').textContent = protect;
     var arc = $('shieldArc'); arc.setAttribute('stroke', pw[1]); arc.setAttribute('stroke-dasharray', protect + ' 100'); arc.style.filter = 'drop-shadow(0 0 6px ' + pw[1] + ')';
     var pwEl = $('protectWord'); pwEl.textContent = pw[0] === 'SAFE' ? 'ALL SYSTEMS NOMINAL' : pw[0] + ' EXPOSURE'; pwEl.style.color = pw[1];
@@ -334,7 +335,7 @@
       '<svg width="100%" height="96" viewBox="0 0 120 70" aria-hidden="true"><defs><linearGradient id="dayfill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f0a500" stop-opacity=".3"/><stop offset="1" stop-color="#f0a500" stop-opacity="0"/></linearGradient></defs><path d="M10 60 A50 50 0 0 1 110 60 Z" fill="url(#dayfill)"/><path d="M10 60 A50 50 0 0 1 110 60" fill="none" stroke="rgba(240,165,0,.6)" stroke-width="1.5" stroke-dasharray="3 3"/><line x1="2" y1="60" x2="118" y2="60" stroke="rgba(207,224,240,.25)"/>' +
       (sunUp ? '<circle cx="' + (60 + 50 * Math.cos(ang)).toFixed(1) + '" cy="' + (60 - 50 * Math.sin(ang)).toFixed(1) + '" r="10" fill="rgba(240,165,0,.25)"/><circle cx="' + (60 + 50 * Math.cos(ang)).toFixed(1) + '" cy="' + (60 - 50 * Math.sin(ang)).toFixed(1) + '" r="5.5" fill="#ffc94d" style="filter:drop-shadow(0 0 6px #f0a500)"/>' : '') +
       '</svg><div style="display:flex;justify-content:space-between;' + MONO + ';font-size:13px;color:var(--white)"><span><span style="color:var(--gold)">▲</span> ' + w.sunrise + '</span><span>' + w.sunset + ' <span style="color:var(--gold)">▼</span></span></div>', 'Daylight ' + dlh + 'h ' + dlm + 'm');
-    html += tile('255,140,0', '#ff8c00', 'M14 14.8V5a2 2 0 1 0-4 0v9.8a4 4 0 1 0 4 0z', 'FEELS LIKE', fd === 0 ? '= REAL' : (fd > 0 ? '+' : '') + Math.round(F() ? fd * 9 / 5 : fd) + '° VS REAL',
+    html += tile('255,140,0', '#ff8c00', 'M14 14.8V5a2 2 0 1 0-4 0v9.8a4 4 0 1 0 4 0z', 'FEELS LIKE', (cv(w.feels) - cv(w.temp)) === 0 ? '= REAL' : (cv(w.feels) > cv(w.temp) ? '+' : '') + (cv(w.feels) - cv(w.temp)) + '° VS REAL',
       '<div class="big" style="font-size:40px">' + deg(w.feels) + '</div><div style="position:relative;height:34px;margin-top:4px"><div style="position:absolute;left:0;right:0;top:10px;height:8px;border-radius:4px;background:linear-gradient(90deg,#4fb7ff,#00e5ff 30%,#00ff88 50%,#f0a500 70%,#ff3322)"></div><span style="position:absolute;top:4px;left:' + pct(w.temp) + ';width:3px;height:20px;margin-left:-1.5px;background:rgba(234,246,255,.6);border-radius:2px"></span><span style="position:absolute;top:6px;left:' + pct(w.feels) + ';width:16px;height:16px;margin-left:-8px;border-radius:50%;background:#eaf6ff;border:3px solid #070b11;box-shadow:0 0 10px #ff8c00"></span><span style="position:absolute;top:24px;left:0;' + MONO + ';font-size:10px;color:rgba(207,224,240,.5)">' + deg(-10) + '</span><span style="position:absolute;top:24px;right:0;' + MONO + ';font-size:10px;color:rgba(207,224,240,.5)">' + deg(40) + '</span></div>',
       fd <= -2 ? 'Wind makes it feel colder than it is' : fd >= 2 ? 'Humidity makes it feel warmer' : 'Close to the real temperature');
     html += tile('0,229,255', '#00e5ff', 'M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z', 'HUMIDITY', comfort,
@@ -399,10 +400,13 @@
   // ---------- clock / ages / countdowns (every second) ----------
   function updateClockAndAge() {
     var n = new Date();
-    $('clock').textContent = 'LOCAL ' + pad(n.getHours()) + ':' + pad(n.getMinutes()) + ':' + pad(n.getSeconds()) + ' · UTC ' + pad(n.getUTCHours()) + ':' + pad(n.getUTCMinutes());
+    // LOCAL = time at the place being viewed (falls back to this device before the first forecast arrives)
+    var lt = S.wx ? new Date(n.getTime() + S.wx.tzOffset * 1000) : null;
+    var lh = lt ? lt.getUTCHours() : n.getHours(), lm = lt ? lt.getUTCMinutes() : n.getMinutes(), ls = n.getSeconds();
+    $('clock').textContent = 'LOCAL ' + pad(lh) + ':' + pad(lm) + ':' + pad(ls) + ' · UTC ' + pad(n.getUTCHours()) + ':' + pad(n.getUTCMinutes());
     if (S.updated) { var m = Math.floor((Date.now() - S.updated) / 60000); $('updated').textContent = m < 1 ? 'UPDATED JUST NOW' : 'UPDATED ' + m + ' MIN AGO'; }
     var mid = Date.UTC(n.getUTCFullYear(), n.getUTCMonth(), n.getUTCDate() + 1), l = Math.max(0, Math.floor((mid - n.getTime()) / 1000));
-    $('surveyCd').textContent = pad(Math.floor(l / 3600)) + ':' + pad(Math.floor(l % 3600 / 60)) + ':' + pad(l % 60);
+    $('surveyCd').textContent = Math.floor(l / 3600) + 'h ' + pad(Math.floor(l % 3600 / 60)) + 'm ' + pad(l % 60) + 's';
     if (stormEnd) { var s = Math.max(0, Math.floor((stormEnd - Date.now()) / 1000)); $('stormCount').textContent = pad(Math.floor(s / 3600)) + ':' + pad(Math.floor(s % 3600 / 60)) + ':' + pad(s % 60); }
     renderLocGlyph();
     if (S.wx && n.getSeconds() === 0) renderRing(S.wx);
@@ -416,9 +420,13 @@
   function buildSurvey() {
     if (!HAVEN) return;
     var day = Math.floor(Date.now() / 86400000);
+    var usedSys = {};
     S.worlds = ORDER.map(function (b, k) {
       var pool = HAVEN.P[b] || []; if (!pool.length) return null;
-      var p = pool[(day + k * 5) % pool.length], s = HAVEN.sys[p[0]];
+      var start = (day + k * 5) % pool.length, p = pool[start];
+      for (var t = 0; t < pool.length; t++) { var c = pool[(start + t) % pool.length]; if (!usedSys[c[0]]) { p = c; break; } }
+      usedSys[p[0]] = 1;
+      var s = HAVEN.sys[p[0]];
       return { biome: b, name: p[1], raw: p[2], weather: p[3], flora: p[4], fauna: p[5], res: p[6] ? p[6].split('|') : [], by: p[7], extreme: !!p[8],
         sys: s[0], galaxy: s[1], glyph: s[2], race: s[3], star: s[4], econ: s[5], conflict: s[6], gIndex: (HAVEN.meta.galaxies || {})[s[1]] || 0 };
     }).filter(Boolean);
