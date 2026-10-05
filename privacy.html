@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Privacy — Atlas Weather Station</title>
+<meta name="description" content="What Atlas Weather Station stores, why, and how to remove it.">
+<link rel="icon" href="/favicon.png" type="image/png">
+<link rel="canonical" href="https://weather.nomansskyhub.app/privacy.html">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700&family=Rajdhani:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070b11;--panel:rgba(255,255,255,0.035);--border:rgba(0,229,255,0.16);--text:#cfe0f0;--dim:rgba(207,224,240,0.65);--white:#eaf6ff;--cyan:#00e5ff;--gold:#f0a500}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:Rajdhani,system-ui,sans-serif;font-size:18px;line-height:1.6;-webkit-font-smoothing:antialiased}
+main{max-width:760px;margin:0 auto;padding:28px 16px 60px}
+a{color:var(--cyan)}a:hover{color:var(--white)}
+.kicker{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:3px;color:var(--gold);text-transform:uppercase}
+h1{font-family:Orbitron,sans-serif;font-size:28px;color:var(--white);margin:6px 0 4px;letter-spacing:1px}
+h2{font-family:Orbitron,sans-serif;font-size:16px;color:var(--cyan);letter-spacing:1.5px;margin:30px 0 8px;text-transform:uppercase}
+p,li{color:var(--text)}ul{padding-left:22px}li{margin:4px 0}
+.box{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-top:16px}
+.dim{color:var(--dim);font-size:15px}
+.back{display:inline-block;margin-bottom:18px;font-family:'Share Tech Mono',monospace;font-size:13px;letter-spacing:2px;text-decoration:none}
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="/">◂ BACK TO ATLAS WEATHER</a>
+  <div class="kicker">◈ Privacy</div>
+  <h1>Your data, in plain English</h1>
+  <p class="dim">Last updated 5 October 2026</p>
+
+  <div class="box">
+    <p style="margin:0"><strong>Short version:</strong> no account, no cookies, no ads and no tracking. The only thing kept on our server is what's needed to send weather alerts you've asked for, and turning alerts off deletes it straight away.</p>
+  </div>
+
+  <h2>Weather alerts</h2>
+  <p>If you turn on alerts, your browser first asks your permission. When you say yes, we keep:</p>
+  <ul>
+    <li><strong>Where to send the alert:</strong> a delivery address your browser creates for this device. It doesn't contain your name, email or phone number.</li>
+    <li><strong>Your area:</strong> the place you last searched or located, rounded to about 11 km, plus the place name shown in the app (for example "London"). Never your exact position.</li>
+    <li><strong>Your choices:</strong> which alerts you ticked, and °C or °F.</li>
+    <li><strong>Which alerts you've had in the last two days,</strong> so you don't get the same one twice.</li>
+  </ul>
+  <p>Every 30 minutes our server checks the forecast for your area and sends an alert if something is about to change. Rain and temperature alerts stay quiet from 23:00 to 07:00.</p>
+  <p>This is kept on our host, <a href="https://www.netlify.com/privacy/" target="_blank" rel="noopener">Netlify</a>. It's only used to send your alerts. It's never shared, sold or used for anything else.</p>
+
+  <h2>How to remove it</h2>
+  <ul>
+    <li><strong>In the app:</strong> open <strong>Alerts</strong> and press <strong>Turn alerts off</strong>. Your sign-up is deleted from our server immediately.</li>
+    <li><strong>Block notifications or uninstall the app:</strong> the next time we try to send an alert, the delivery service tells us the device has gone, and we delete your sign-up automatically.</li>
+    <li>Your area updates automatically when you search a new place while alerts are on.</li>
+  </ul>
+
+  <h2>Stored on your device only</h2>
+  <p>The app saves a few settings in your own browser so it remembers them next time: your last place, °C/°F, the effects switch and your alert choices. These never leave your device. Clearing this site's data in your browser removes them. Because they only do what you asked for, they don't need a cookie banner.</p>
+
+  <h2>Services the app talks to</h2>
+  <ul>
+    <li><a href="https://open-meteo.com/en/terms" target="_blank" rel="noopener">Open-Meteo</a>: forecast, air quality and place search (receives the coordinates being looked up).</li>
+    <li><a href="https://osmfoundation.org/wiki/Privacy_Policy" target="_blank" rel="noopener">OpenStreetMap Nominatim</a>: turns a city name into a location and back.</li>
+    <li><a href="https://ipapi.co/privacy/" target="_blank" rel="noopener">ipapi.co</a>: only if you don't share your location, to guess your rough area from your internet address.</li>
+    <li><a href="https://sentry.io/privacy/" target="_blank" rel="noopener">Sentry</a>: if the app crashes, a technical error report is sent so the bug can be fixed.</li>
+    <li>Google Fonts: the fonts the app uses.</li>
+    <li>Your browser's own push service (Google, Apple, Mozilla or Microsoft): delivers alerts to your device.</li>
+  </ul>
+
+  <h2>Questions</h2>
+  <p>Atlas Weather Station is a free, fan-made project by elegra1965. The code is public on <a href="https://github.com/elegra1965-source/nms-weather-app.netlify.app" target="_blank" rel="noopener">GitHub</a>, where you can also raise a question.</p>
+  <p class="dim">Not affiliated with, sponsored by, or endorsed by Hello Games. No Man's Sky is a trademark of Hello Games.</p>
+</main>
+</body>
+</html>

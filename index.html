@@ -388,7 +388,7 @@ body.no-fx .fx{display:none!important}
       <div class="notif"><img src="/icon-mark.png" alt=""><div style="min-width:0"><div class="h"><span style="font-weight:600;color:var(--text)">ATLAS Weather</span><span>now</span></div><b>◈ Rain starting in 20 min</b><p>Light rain until about 16:00. Take a coat, Traveller.</p></div></div>
       <div class="notif" style="border-color:rgba(255,140,0,.35)"><img src="/icon-mark.png" alt=""><div style="min-width:0"><div class="h"><span style="font-weight:600;color:var(--text)">ATLAS Weather</span><span>2 min ago</span></div><b style="color:var(--orange)">⚠ Extreme weather approaching</b><p>Thunderstorm expected from 18:00. Gusts up to 70 km/h.</p></div></div>
       <div id="permLine"></div>
-      <div class="sub" style="font-size:13.5px">Alerts arrive while ATLAS is open or running in the background. On iPhone, add ATLAS to your Home Screen first (Share ▸ Add to Home Screen). Alerts use the location you last searched or located.</div>
+      <div class="sub" style="font-size:13.5px">Alerts arrive even when ATLAS is closed. They use the place you last searched or located, rounded to about 11 km. Rain and temperature alerts stay quiet from 23:00 to 07:00. On iPhone, add ATLAS to your Home Screen first (Share ▸ Add to Home Screen). Turning alerts off deletes your sign-up. <a href="/privacy.html">How your data is used</a></div>
       <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:auto">
         <button type="button" class="btn btn-primary" id="enableAlerts">◈ Turn on alerts</button>
         <button type="button" class="btn btn-ghost" id="testAlert">Send test alert</button>
@@ -541,12 +541,13 @@ body.no-fx .fx{display:none!important}
       <a href="https://map.nomansskyhub.app">Galactic Map</a>
       <a href="https://theme.nomansskyhub.app">Theme Pack</a>
       <a href="https://translator.nomansskyhub.app">Alphabet Translator</a>
+      <a href="/privacy.html">Privacy</a>
     </nav>
     <p>Weather by <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a> · Places by OpenStreetMap · Planet data from <a href="https://havenmap.online" target="_blank" rel="noopener">Voyager's Haven</a> and the travellers who charted them · Icons from the No Man's Sky wiki. Built by elegra1965. Fan-made project, not affiliated with Hello Games. No Man's Sky is a trademark of Hello Games.</p>
   </footer>
 </div>
 <div id="toast" role="status" aria-live="polite"></div>
 
-<script src="/app-v2.js?v=6"></script>
+<script src="/app-v2.js?v=7"></script>
 </body>
 </html>

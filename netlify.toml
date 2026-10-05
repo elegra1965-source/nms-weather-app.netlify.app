@@ -4,6 +4,9 @@
   # A commit that only changes README.md skips the deploy (saves build credits)
   ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- . ':(exclude)README.md'"
 
+[functions]
+  directory = "netlify/functions"
+
 [[headers]]
   for = "/sw.js"
   [headers.values]

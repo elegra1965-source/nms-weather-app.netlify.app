@@ -162,7 +162,7 @@
     return Promise.all([fetchWeather(loc.lat, loc.lon, loc.city), fetchAQI(loc.lat, loc.lon)]).then(function (res) {
       S.wx = res[0]; S.wx.country = loc.country || ''; S.aqi = res[1]; S.loc = loc; S.updated = Date.now();
       lsSet('atlas-last-loc', loc);
-      render(); status(''); checkAlerts();
+      render(); status(''); checkAlerts(); syncPush();
     }).catch(function (e) { console.warn(e); status('SIGNAL LOST — check your connection and try again', true); })
       .then(function () { busy = false; if (pending) { var p = pending; pending = null; load(p[0], p[1]); } });
   }
@@ -470,13 +470,13 @@
     $('alertRows').innerHTML = ALERT_ROWS.map(function (r) {
       return '<label class="al-row"><input type="checkbox" data-k="' + r[0] + '"' + (S.prefs[r[0]] ? ' checked' : '') + '><span class="al-ico" aria-hidden="true">' + r[1] + '</span><span style="min-width:0"><span class="al-t">' + r[2] + '</span><span class="al-d">' + r[3] + '</span></span></label>';
     }).join('');
-    $('alertRows').querySelectorAll('input').forEach(function (inp) { inp.onchange = function () { S.prefs[inp.getAttribute('data-k')] = inp.checked; lsSet('atlas-alert-prefs-v2', S.prefs); }; });
+    $('alertRows').querySelectorAll('input').forEach(function (inp) { inp.onchange = function () { S.prefs[inp.getAttribute('data-k')] = inp.checked; lsSet('atlas-alert-prefs-v2', S.prefs); syncPush(); }; });
     renderPerm();
   }
   function perm() { return typeof Notification === 'undefined' ? 'unsupported' : Notification.permission; }
   function renderPerm() {
     var p = perm(), on = S.alertsOn && p === 'granted', pl = $('permLine');
-    pl.textContent = on ? '✓ NOTIFICATIONS ALLOWED · ALERTS ACTIVE' : p === 'denied' ? '✕ BLOCKED BY YOUR BROWSER · allow notifications for this site in its settings' : p === 'unsupported' ? '✕ THIS BROWSER CANNOT SHOW NOTIFICATIONS' : '○ ALERTS ARE OFF · your browser will ask permission';
+    pl.textContent = on ? (S.pushOn ? '✓ ALERTS ACTIVE · EVEN WHEN ATLAS IS CLOSED' : '✓ ALERTS ACTIVE · WHILE ATLAS IS OPEN') : p === 'denied' ? '✕ BLOCKED BY YOUR BROWSER · allow notifications for this site in its settings' : p === 'unsupported' ? '✕ THIS BROWSER CANNOT SHOW NOTIFICATIONS' : '○ ALERTS ARE OFF · your browser will ask permission';
     pl.style.color = on ? 'var(--green)' : p === 'denied' || p === 'unsupported' ? 'var(--red)' : 'rgba(207,224,240,.7)';
     pl.style.borderColor = on ? 'rgba(0,255,136,.4)' : 'rgba(255,255,255,.1)';
     $('enableAlerts').textContent = on ? 'Turn alerts off' : '◈ Turn on alerts';
@@ -491,6 +491,7 @@
   function once(key, fn) { var sent = lsGet('atlas-alert-sent', {}); if (sent[key]) return; fn(); sent[key] = Date.now(); var cut = Date.now() - 2 * 86400e3; Object.keys(sent).forEach(function (k) { if (sent[k] < cut) delete sent[k]; }); lsSet('atlas-alert-sent', sent); }
   function checkAlerts() {
     var w = S.wx; if (!w || !S.alertsOn || perm() !== 'granted') return;
+    if (S.pushOn) return; // the server sends these now (even when ATLAS is closed)
     var city = w.city, today = w.localTime.slice(0, 10), P = S.prefs, H = w.hourly;
     if (P.severe) {
       for (var i = 0; i < Math.min(4, H.length); i++) {
@@ -517,18 +518,54 @@
     }
   }
 
-  // ---------- closed-app push (needs VAPID key + backend; inert until set) ----------
-  var VAPID_PUBLIC_KEY = ''; // paste VAPID public key here once the Netlify push functions exist
-  function subscribePush() {
-    if (!VAPID_PUBLIC_KEY || !('serviceWorker' in navigator) || !('PushManager' in window)) return;
+  // ---------- closed-app push (alerts even when ATLAS is closed) ----------
+  // Sign-up goes to our Netlify function; a scheduled function checks the forecast every 30 min.
+  var VAPID_PUBLIC_KEY = 'BCdrW7jjy_MQDwt3V0rajNedogC0YsaYeny-QAdBMkH6g35-GhemfJSRJrF5yAI1R2MoUk8OefpT4t9dhoUzfGA';
+  var PUSH_API = '/api/push-subscribe';
+  S.pushOn = lsGet('atlas-push-on', false);
+  var pushReady = VAPID_PUBLIC_KEY && 'serviceWorker' in navigator && 'PushManager' in window;
+  function vapidBytes() {
     var k = VAPID_PUBLIC_KEY, p = '='.repeat((4 - k.length % 4) % 4), raw = atob((k + p).replace(/-/g, '+').replace(/_/g, '/')), arr = new Uint8Array(raw.length);
     for (var i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
-    navigator.serviceWorker.ready.then(function (r) { return r.pushManager.getSubscription().then(function (s) { return s || r.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: arr }); }); })
-      .then(function (sub) { /* TODO: POST {sub, loc: S.loc, prefs: S.prefs} to the push-subscribe function */ return sub; }).catch(function (e) { console.warn('push', e); });
+    return arr;
+  }
+  function pushSig(sub) { return JSON.stringify([sub.endpoint, Math.round(S.loc.lat * 10), Math.round(S.loc.lon * 10), S.loc.city || '', S.prefs, S.unit]); }
+  function setPushOn(on) { S.pushOn = on; lsSet('atlas-push-on', on); if (!on) lsSet('atlas-push-sig', ''); renderPerm(); }
+  function sendSub(sub) {
+    if (!S.loc) return Promise.resolve(false);
+    var body = { sub: sub.toJSON(), lat: S.loc.lat, lon: S.loc.lon, place: S.loc.city || '', prefs: S.prefs, unit: S.unit };
+    return fetch(PUSH_API, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) })
+      .then(function (r) { if (!r.ok) throw new Error('push-subscribe ' + r.status); lsSet('atlas-push-sig', pushSig(sub)); setPushOn(true); return true; });
+  }
+  function subscribePush() {
+    if (!pushReady || !S.loc) return Promise.resolve(false);
+    return navigator.serviceWorker.ready.then(function (r) { return r.pushManager.getSubscription().then(function (s) { return s || r.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: vapidBytes() }); }); })
+      .then(sendSub).catch(function (e) { console.warn('push', e); setPushOn(false); return false; });
+  }
+  // keep the server copy in step with your place, alert choices and units (only sends when something changed)
+  var pushTimer = null;
+  function syncPush() {
+    if (!pushReady || !S.alertsOn || perm() !== 'granted' || !S.loc) return;
+    clearTimeout(pushTimer);
+    pushTimer = setTimeout(function () {
+      navigator.serviceWorker.ready.then(function (r) { return r.pushManager.getSubscription(); }).then(function (sub) {
+        if (!sub) return subscribePush();
+        if (S.pushOn && pushSig(sub) === lsGet('atlas-push-sig', '')) return;
+        return sendSub(sub);
+      }).catch(function (e) { console.warn('push sync', e); });
+    }, 1500);
+  }
+  function unsubscribePush() {
+    if (!pushReady) { setPushOn(false); return Promise.resolve(); }
+    return navigator.serviceWorker.ready.then(function (r) { return r.pushManager.getSubscription(); }).then(function (sub) {
+      if (!sub) return;
+      return fetch(PUSH_API, { method: 'DELETE', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ endpoint: sub.endpoint }) })
+        .catch(function () {}).then(function () { return sub.unsubscribe(); });
+    }).catch(function () {}).then(function () { setPushOn(false); });
   }
 
   // ---------- wiring ----------
-  function setUnit(u) { S.unit = u; lsSet('atlas-unit', u); $('unitC').setAttribute('aria-pressed', u === 'C'); $('unitF').setAttribute('aria-pressed', u === 'F'); render(); }
+  function setUnit(u) { S.unit = u; lsSet('atlas-unit', u); syncPush(); $('unitC').setAttribute('aria-pressed', u === 'C'); $('unitF').setAttribute('aria-pressed', u === 'F'); render(); }
   function setFx(on) {
     S.fx = on; lsSet('atlas-fx', on); document.body.classList.toggle('no-fx', !on);
     $('fxBtn').classList.toggle('off', !on); $('fxBtn').setAttribute('aria-pressed', on); $('fxLabel').textContent = on ? 'EFFECTS ON' : 'EFFECTS OFF';
@@ -546,11 +583,11 @@
   $('alertsBtn').onclick = function () { var p = $('alertPanel'), o = !p.classList.contains('open'); p.classList.toggle('open', o); $('alertsBtn').setAttribute('aria-expanded', o); if (o) renderAlertPanel(); };
   $('closeAlerts').onclick = function () { $('alertPanel').classList.remove('open'); $('alertsBtn').setAttribute('aria-expanded', 'false'); };
   $('enableAlerts').onclick = function () {
-    if (S.alertsOn && perm() === 'granted') { S.alertsOn = false; lsSet('atlas-alerts-on', false); renderPerm(); toast('Alerts turned off'); return; }
+    if (S.alertsOn && perm() === 'granted') { S.alertsOn = false; lsSet('atlas-alerts-on', false); unsubscribePush(); renderPerm(); toast('Alerts turned off · your sign-up was deleted'); return; }
     if (perm() === 'unsupported') { toast('This browser cannot show notifications'); return; }
     Notification.requestPermission().then(function (p) {
       S.alertsOn = p === 'granted'; lsSet('atlas-alerts-on', S.alertsOn); renderPerm();
-      if (S.alertsOn) { notify('◈ ATLAS alerts are on', 'You\'ll hear from us when the weather is about to change.', 'atlas-on'); subscribePush(); checkAlerts(); }
+      if (S.alertsOn) { notify('◈ ATLAS alerts are on', 'You\'ll hear from us when the weather is about to change.', 'atlas-on'); subscribePush().then(function () { checkAlerts(); }); }
     });
   };
   $('testAlert').onclick = function () { if (perm() !== 'granted') { toast('Turn on alerts first'); return; } notify('◈ ATLAS test alert', 'Notifications are working. See you out there, Traveller.', 'atlas-test'); };

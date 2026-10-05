@@ -13,19 +13,22 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 - **Forecast.** Next 24 hours (temperature, rain and wind charts with sunrise/sunset), a 7-day range view, and 9 tiles: wind compass, UV, sun path, feels like, humidity and dew point, pressure trend, visibility, rain and air quality.
 - **Storm warnings.** An in-game style "Extreme weather approaching" banner with a countdown.
 - **Daily planetary survey.** 8 real planets charted by players on [Voyager's Haven](https://havenmap.online), one for each biome, changing each day. Every scan shows the portal address as glyphs, the discoverer, resources, and a link to open the system on the [NMS Galactic Map](https://map.nomansskyhub.app).
-- **Alerts** (while the app is open or in the background): rain soon, extreme weather, big temperature changes, a morning briefing and the new daily survey.
+- **Alerts, even when the app is closed:** rain soon, extreme weather, big temperature changes, a morning briefing and the new daily survey. A scheduled Netlify function checks the forecast every 30 minutes. See the [privacy page](https://weather.nomansskyhub.app/privacy.html) for what is stored and how to remove it.
 - **Search or Scan.** Type a city, or press Scan with the box empty to find your location. Share a city with `?city=London`.
 - °C/°F, 12/24-hour clock and an effects on/off switch for battery or motion sensitivity.
 
 ## How it's built
 
-A plain HTML/CSS/JavaScript site with no build step and no framework. Deployed on Netlify straight from this repo.
+A plain HTML/CSS/JavaScript site with no build step and no framework, plus two small Netlify functions for alerts. Deployed on Netlify straight from this repo.
 
 | File | What it is |
 |---|---|
 | `index.html` | Page layout and styles |
 | `app-v2.js` | All the app logic: weather fetch, biome rules, charts, survey, alerts |
 | `sw.js` | Service worker for offline use and notifications |
+| `netlify/functions/push-subscribe.mjs` | Saves or deletes an alert sign-up (Netlify Blobs) |
+| `netlify/functions/push-check.mjs` | Runs every 30 minutes, checks the forecast and sends alerts |
+| `privacy.html` | What is stored and how to remove it |
 | `data/haven-worlds.json` | Snapshot of real planets from Voyager's Haven used by the daily survey |
 | `icons/`, `hd/`, `glyphs/`, `fonts/` | Weather icons, planet images, portal glyphs, NMS alphabet font |
 

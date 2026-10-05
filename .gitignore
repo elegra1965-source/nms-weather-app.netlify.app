@@ -10,3 +10,7 @@ TODO*
 .DS_Store
 Thumbs.db
 *.tmp
+
+# npm / Netlify
+node_modules/
+.netlify/
