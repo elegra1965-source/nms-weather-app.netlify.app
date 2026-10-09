@@ -575,7 +575,7 @@
   }
   function notify(title, body, tag) {
     if (perm() !== 'granted') return;
-    var opt = { body: body, icon: '/icon-192.png', badge: '/icon-192.png', tag: tag || 'atlas' };
+    var opt = { body: body, icon: '/icon-192.png', badge: '/badge-96.png', tag: tag || 'atlas' };
     if ('serviceWorker' in navigator) navigator.serviceWorker.ready.then(function (r) { r.showNotification(title, opt); }).catch(function () { try { new Notification(title, opt); } catch (e) {} });
     else try { new Notification(title, opt); } catch (e) {}
   }
