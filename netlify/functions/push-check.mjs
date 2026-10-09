@@ -13,7 +13,7 @@ async function fetchBatch(locs) {
     longitude: locs.map(l => l.lon).join(','),
     current: 'temperature_2m,weather_code,wind_gusts_10m',
     hourly: 'temperature_2m,weather_code,precipitation_probability',
-    daily: 'temperature_2m_max,temperature_2m_min,weather_code',
+    daily: 'temperature_2m_max,temperature_2m_min,weather_code,precipitation_probability_max,wind_speed_10m_max',
     timezone: 'auto', forecast_days: '2'
   });
   const r = await fetch('https://api.open-meteo.com/v1/forecast?' + q, { signal: AbortSignal.timeout(10000) });

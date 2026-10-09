@@ -35,7 +35,7 @@
   var S = {
     unit: lsGet('atlas-unit', 'C'), metric: 'temp', fx: lsGet('atlas-fx', !window.matchMedia('(prefers-reduced-motion: reduce)').matches),
     loc: lsGet('atlas-last-loc', null), wx: null, aqi: null, updated: null, worlds: [], world: 0,
-    prefs: Object.assign({ rain: true, severe: true, temp: true, daily: false, survey: false }, lsGet('atlas-alert-prefs-v2', {})),
+    prefs: Object.assign({ rain: true, severe: true, temp: true, daily: false, tomorrow: false, survey: false }, lsGet('atlas-alert-prefs-v2', {})),
     alertsOn: lsGet('atlas-alerts-on', false)
   };
 
@@ -555,6 +555,7 @@
     ['severe', '⚠', 'Extreme weather', 'Thunderstorms, heavy rain or snow, gales, extreme heat or frost'],
     ['temp', '🌡', 'Big temperature change', 'When it is about to get 5° warmer or colder within 3 hours'],
     ['daily', '☀', 'Morning briefing', 'Today’s forecast and your biome match after 07:00'],
+    ['tomorrow', '🌙', 'Evening outlook', 'Tomorrow’s forecast, rain chance and wind after 18:00'],
     ['survey', '◈', 'New planetary survey', 'When today’s 8 worlds refresh at 00:00 UTC']
   ];
   function renderAlertPanel() {
@@ -602,6 +603,13 @@
     }
     if (P.daily && localHour() >= 7) {
       once(today + '|daily', function () { var d = w.days[0]; notify('☀ Morning briefing · ' + city, (WMO[d.code] || '') + '. High ' + deg(d.hi) + ', low ' + deg(d.lo) + '. Biome match: ' + translate(w, S.aqi).title + '.', 'atlas-daily'); });
+    }
+    if (P.tomorrow && localHour() >= 18 && w.days[1]) {
+      once(today + '|tmrw', function () {
+        var t = w.days[1], txt = (WMO[t.code] || 'Mixed conditions') + '. High ' + deg(t.hi) + ', low ' + deg(t.lo) + '.';
+        if (t.pop >= 30) txt += ' ' + t.pop + '% chance of ' + (isSnow(t.code) ? 'snow' : 'rain') + '.';
+        notify('🌙 Tomorrow · ' + city, txt, 'atlas-tomorrow');
+      });
     }
     if (P.survey) {
       var ud = new Date().toISOString().slice(0, 10);

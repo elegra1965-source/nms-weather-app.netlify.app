@@ -30,7 +30,7 @@ export async function keyFor(endpoint) {
 // Round to 0.1 degree (about 11 km) so we never keep anyone's exact position.
 export const roundCoord = n => Math.round(Number(n) * 10) / 10;
 
-export const DEFAULT_PREFS = { rain: true, severe: true, temp: true, daily: false, survey: false };
+export const DEFAULT_PREFS = { rain: true, severe: true, temp: true, daily: false, tomorrow: false, survey: false };
 
 export function cleanPrefs(p) {
   const out = {};
@@ -72,7 +72,9 @@ export function summarise(wx) {
     localHour: parseInt(C.time.slice(11, 13), 10),
     temp: C.temperature_2m, code: C.weather_code, gust: C.wind_gusts_10m || 0,
     hours,
-    today: D ? { hi: D.temperature_2m_max[0], lo: D.temperature_2m_min[0], code: D.weather_code[0] } : null
+    today: D ? { hi: D.temperature_2m_max[0], lo: D.temperature_2m_min[0], code: D.weather_code[0] } : null,
+    tomorrow: D && D.time && D.time.length > 1 ? { hi: D.temperature_2m_max[1], lo: D.temperature_2m_min[1], code: D.weather_code[1],
+      pop: (D.precipitation_probability_max || [])[1] || 0, wind: (D.wind_speed_10m_max || [])[1] || 0 } : null
   };
 }
 
@@ -112,10 +114,21 @@ export function decide(s, sub, utcDate, utcHour) {
     add(d + '|daily', '☀ Morning briefing · ' + place,
       (WMO[s.today.code] || 'Today') + '. High ' + u.deg(s.today.hi) + ', low ' + u.deg(s.today.lo) + '.', 'atlas-daily');
   }
+  if (P.tomorrow && s.tomorrow && s.localHour >= 18 && s.localHour < 21) {
+    add(d + '|tmrw', '🌙 Tomorrow · ' + place, tomorrowText(s.tomorrow, u), 'atlas-tomorrow');
+  }
   if (P.survey && utcHour === 0) {
     add(utcDate + '|survey', '◈ New planetary survey', 'Today’s 8 worlds are in. Tap to scan them, Traveller.', 'atlas-survey');
   }
   return out;
+}
+
+// Evening outlook wording: "Partly cloudy. High 14°, low 7°. 40% chance of rain. Windy, up to 45 km/h."
+export function tomorrowText(t, u) {
+  let s = (WMO[t.code] || 'Mixed conditions') + '. High ' + u.deg(t.hi) + ', low ' + u.deg(t.lo) + '.';
+  if (t.pop >= 30) s += ' ' + t.pop + '% chance of ' + (isSnow(t.code) ? 'snow' : 'rain') + '.';
+  if (t.wind >= 30) s += ' Windy, up to ' + u.spd(t.wind) + '.';
+  return s;
 }
 
 // Forget delivered-alert keys older than two days.
