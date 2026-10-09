@@ -14,6 +14,13 @@ export default async (req) => {
   let data;
   try { data = JSON.parse(text); } catch (e) { return json({ error: 'bad json' }, 400); }
 
+  // Without both VAPID keys the 30-minute checker can't send anything. Say so, so the app
+  // keeps its own open-app alerts running instead of believing the server has it covered.
+  if (req.method === 'POST' && !(Netlify.env.get('VAPID_PUBLIC_KEY') && Netlify.env.get('VAPID_PRIVATE_KEY'))) {
+    console.log('push-subscribe: VAPID keys missing, refusing sign-up');
+    return json({ error: 'push not configured' }, 503);
+  }
+
   const store = getStore(STORE);
 
   if (req.method === 'DELETE') {
