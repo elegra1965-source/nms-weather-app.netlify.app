@@ -35,7 +35,7 @@
   var S = {
     unit: lsGet('atlas-unit', 'C'), metric: 'temp', fx: lsGet('atlas-fx', !window.matchMedia('(prefers-reduced-motion: reduce)').matches),
     loc: lsGet('atlas-last-loc', null), wx: null, aqi: null, updated: null, worlds: [], world: 0,
-    prefs: Object.assign({ rain: true, severe: true, temp: true, daily: false, tomorrow: false, survey: false }, lsGet('atlas-alert-prefs-v2', {})),
+    prefs: Object.assign({ rain: true, severe: true, temp: true, daily: false, tomorrow: false, survey: false, expNew: false, expEnd: false }, lsGet('atlas-alert-prefs-v2', {})),
     alertsOn: lsGet('atlas-alerts-on', false)
   };
 
@@ -197,7 +197,8 @@
     hero.setAttribute('data-fx', S.fx ? b.fx : '');
     var orb = $('orb');
     orb.style.backgroundImage = "url('" + HD(b.img) + "')";
-    orb.style.boxShadow = 'inset -45px -32px 90px rgba(0,0,0,.9), inset 14px 10px 30px rgba(255,255,255,.18), 0 0 60px ' + b.glow;
+    // lighter night-side shadow on phones so the small globe's surface stays visible
+    orb.style.boxShadow = (window.innerWidth <= 700 ? 'inset -22px -16px 46px rgba(0,0,0,.7), inset 8px 6px 18px rgba(255,255,255,.16), 0 0 40px ' : 'inset -45px -32px 90px rgba(0,0,0,.9), inset 14px 10px 30px rgba(255,255,255,.18), 0 0 60px ') + b.glow;
     $('halo').style.background = 'radial-gradient(circle, transparent 58%, ' + b.glow + ' 64%, transparent 74%)';
     $('tempNow').style.textShadow = '0 0 40px ' + b.glow;
     var place = w.city + (w.country ? ', ' + w.country : '');
@@ -556,7 +557,9 @@
     ['temp', '🌡', 'Big temperature change', 'When it is about to get 5° warmer or colder within 3 hours'],
     ['daily', '☀', 'Morning briefing', 'Today’s forecast and your biome match after 07:00'],
     ['tomorrow', '🌙', 'Evening outlook', 'Tomorrow’s forecast, rain chance and wind after 18:00'],
-    ['survey', '◈', 'New planetary survey', 'When today’s 8 worlds refresh at 00:00 UTC']
+    ['survey', '◈', 'New planetary survey', 'When today’s 8 worlds refresh at 00:00 UTC'],
+    ['expNew', '🚀', 'New expedition live', 'The day a new No Man’s Sky expedition starts'],
+    ['expEnd', '⏳', 'Expedition ending', 'A last call 24 hours before the current expedition closes']
   ];
   function renderAlertPanel() {
     $('alertRows').innerHTML = ALERT_ROWS.map(function (r) {
@@ -690,6 +693,8 @@
   $('unitF').onclick = function () { setUnit('F'); };
   $('fxBtn').onclick = function () { setFx(!S.fx); };
   $('alertsBtn').onclick = function () { var p = $('alertPanel'), o = !p.classList.contains('open'); p.classList.toggle('open', o); $('alertsBtn').setAttribute('aria-expanded', o); if (o) renderAlertPanel(); };
+  // ?alerts=exp (linked from ATLAS and the Hub) opens the alert settings straight away
+  if (/[?&]alerts=/.test(location.search)) setTimeout(function () { var p = $('alertPanel'); if (!p.classList.contains('open')) $('alertsBtn').click(); p.scrollIntoView({ block: 'start' }); }, 800);
   $('closeAlerts').onclick = function () { $('alertPanel').classList.remove('open'); $('alertsBtn').setAttribute('aria-expanded', 'false'); };
   $('enableAlerts').onclick = function () {
     if (S.alertsOn && perm() === 'granted') { S.alertsOn = false; lsSet('atlas-alerts-on', false); unsubscribePush(); renderPerm(); toast('Alerts turned off · your sign-up was deleted'); return; }

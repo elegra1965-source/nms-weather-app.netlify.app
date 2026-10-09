@@ -1,10 +1,10 @@
 // Atlas Weather Station — Service Worker (v4.0 redesign)
-const CACHE_NAME = 'nms-weather-v62';
+const CACHE_NAME = 'nms-weather-v63';
 
 // App shell — cached on install (every path here must exist, or install fails)
 const SHELL_ASSETS = [
-  '/', '/index.html', '/app-v2.js?v=18', '/manifest.json', '/data/haven-worlds.json',
-  '/icon-mark.png', '/icon-192.png', '/badge-96.png', '/icon-512.png', '/mobile.css?v=2', '/mobile.js?v=1', '/icon-maskable-192.png', '/icon-maskable-512.png', '/favicon.png', '/favicon-64.png', '/apple-touch-icon.png',
+  '/', '/index.html', '/app-v2.js?v=19', '/manifest.json', '/data/haven-worlds.json',
+  '/icon-mark.png', '/icon-192.png', '/badge-96.png', '/icon-512.png', '/mobile.css?v=3', '/mobile.js?v=1', '/icon-maskable-192.png', '/icon-maskable-512.png', '/favicon.png', '/favicon-64.png', '/apple-touch-icon.png',
   '/fonts/NMSAlphabet.ttf',
   '/icons/4.png', '/icons/12.png', '/icons/14.png', '/icons/26.png', '/icons/30.png', '/icons/31.png', '/icons/32.png',
   '/icons/hz-tile-heat.webp', '/icons/hz-tile-cold.webp', '/icons/hz-tile-radioactive.webp', '/icons/hz-tile-toxic.webp'
@@ -79,6 +79,8 @@ self.addEventListener('notificationclick', event => {
   event.notification.close();
   const url = event.notification.data || '/';
   event.waitUntil(clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+    const abs = new URL(url, self.location.origin);
+    if (abs.origin !== self.location.origin) return clients.openWindow ? clients.openWindow(abs.href) : null; // expedition alerts open ATLAS
     for (const c of list) { if ('focus' in c) return c.focus(); }
     if (clients.openWindow) return clients.openWindow(url);
   }));

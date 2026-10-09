@@ -21,8 +21,9 @@
 
   /* hero: biome + exosuit report fold away; smaller day-cycle dial */
   .hero:not(.m-open) .biome,.hero:not(.m-open) .atlas{display:none}
-  .orbbox{transform:scale(.76);margin:-33px 0}
-  .hero-r{padding:0;gap:10px}
+  /* real size (not a transform: the float animation owns transform), with room for the 12:00 / 00:00 labels */
+  .orbbox{width:236px;height:236px;margin:14px 0 12px}.halo{width:206px;height:206px}.orb{width:184px;height:184px;--loop:327px}
+  .hero-r{padding:0;gap:12px}
 
   /* 7-day: three days, the rest on tap */
   .week:not(.m-open) .drow:nth-child(n+4){display:none}

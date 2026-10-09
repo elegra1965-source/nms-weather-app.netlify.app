@@ -3,7 +3,7 @@
 // so it never triggers a site deploy.
 import { getStore } from '@netlify/blobs';
 import webpush from 'web-push';
-import { STORE, summarise, decide, pruneSent } from './lib/alerts.mjs';
+import { STORE, summarise, decide, pruneSent, parseWikiExpeditions, expeditionAlerts } from './lib/alerts.mjs';
 
 const BATCH = 40; // locations per Open-Meteo request
 
@@ -47,18 +47,27 @@ export default async () => {
     } catch (e) { console.log('push-check: forecast failed', e.message); }
   }
 
+  // expedition dates from the NMS wiki, once per run (only if someone wants expedition alerts)
+  let expRows = null;
+  if (subs.some(s => s.rec.prefs && (s.rec.prefs.expNew || s.rec.prefs.expEnd))) {
+    try {
+      const r = await fetch('https://nomanssky.fandom.com/api.php?action=parse&page=List_of_Expeditions&prop=wikitext&format=json', { signal: AbortSignal.timeout(10000), headers: { 'user-agent': 'AtlasWeatherStation/1.0 (+https://weather.nomansskyhub.app)' } });
+      if (r.ok) { const j = await r.json(); expRows = parseWikiExpeditions(j && j.parse && j.parse.wikitext && j.parse.wikitext['*']); }
+    } catch (e) { console.log('push-check: wiki failed', e.message); }
+  }
+
   const now = new Date(), utcDate = now.toISOString().slice(0, 10), utcHour = now.getUTCHours();
   let sentCount = 0, removed = 0;
   await Promise.all(subs.map(async ({ k, rec }) => {
     const s = wxById.get(rec.lat + ',' + rec.lon);
-    if (!s) return;
-    const alerts = decide(s, rec, utcDate, utcHour);
+    rec.sent = pruneSent(rec.sent);
+    const alerts = (s ? decide(s, rec, utcDate, utcHour) : [])
+      .concat(expeditionAlerts(expRows, rec.prefs).filter(a => !rec.sent[a.key]));
     if (!alerts.length) return;
     let changed = false, gone = false;
-    rec.sent = pruneSent(rec.sent);
     for (const a of alerts) {
       try {
-        await webpush.sendNotification(rec.sub, JSON.stringify({ title: a.title, body: a.body, tag: a.tag, url: '/' }), { TTL: 3600, urgency: a.tag === 'atlas-severe' ? 'high' : 'normal' });
+        await webpush.sendNotification(rec.sub, JSON.stringify({ title: a.title, body: a.body, tag: a.tag, url: a.url || '/' }), { TTL: 3600, urgency: a.tag === 'atlas-severe' ? 'high' : 'normal' });
         rec.sent[a.key] = Date.now(); changed = true; sentCount++;
       } catch (e) {
         if (e.statusCode === 404 || e.statusCode === 410) { gone = true; break; } // phone unsubscribed or app removed

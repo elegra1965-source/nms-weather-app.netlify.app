@@ -30,7 +30,7 @@ export async function keyFor(endpoint) {
 // Round to 0.1 degree (about 11 km) so we never keep anyone's exact position.
 export const roundCoord = n => Math.round(Number(n) * 10) / 10;
 
-export const DEFAULT_PREFS = { rain: true, severe: true, temp: true, daily: false, tomorrow: false, survey: false };
+export const DEFAULT_PREFS = { rain: true, severe: true, temp: true, daily: false, tomorrow: false, survey: false, expNew: false, expEnd: false };
 
 export function cleanPrefs(p) {
   const out = {};
@@ -135,5 +135,42 @@ export function tomorrowText(t, u) {
 export function pruneSent(sent, now = Date.now()) {
   const cut = now - 2 * 86400e3, out = {};
   for (const [k, t] of Object.entries(sent || {})) if (t >= cut) out[k] = t;
+  return out;
+}
+
+// ---------- Expedition alerts (same wiki table ATLAS reads) ----------
+// "List of Expeditions": number | decal | title | start | end | description. Dates are days;
+// expeditions go live around 14:00 UTC.
+export function parseWikiExpeditions(wt) {
+  const rows = [];
+  for (const chunk of String(wt || '').split(/\n\|-/)) {
+    const cells = chunk.split('\n').filter(l => /^\|(?!\})/.test(l)).map(l => l.replace(/^\|\s*/, '').trim());
+    if (cells.length < 4 || !/^\d+$/.test(cells[0])) continue;
+    const ti = cells.findIndex(c => /\[\[\s*Expedition\s+\d+\s*:/i.test(c));
+    if (ti < 0) continue;
+    const tm = cells[ti].match(/\[\[\s*Expedition\s+\d+\s*:\s*([^|\]]+)/i);
+    const day = c => { const m = String(c || '').match(/^(\d{4}-\d{2}-\d{2})/); return m ? m[1] : null; };
+    const start = day(cells[ti + 1]);
+    if (!tm || !start) continue;
+    rows.push({ num: parseInt(cells[0], 10), title: tm[1].trim(), start: Date.parse(start + 'T14:00:00Z'), end: day(cells[ti + 2]) ? Date.parse(day(cells[ti + 2]) + 'T14:00:00Z') : null });
+  }
+  return rows.sort((a, b) => a.num - b.num);
+}
+
+const ATLAS_URL = 'https://atlas.nomansskyhub.app/';
+// Alerts for one subscriber: a new expedition in its first 24 h, and the last 24 h of the current one.
+export function expeditionAlerts(rows, prefs, now = Date.now()) {
+  const out = [], P = prefs || {};
+  if (!rows || !rows.length) return out;
+  const live = rows.filter(r => r.start <= now && (!r.end || r.end > now));
+  const cur = live[live.length - 1];
+  if (!cur) return out;
+  const name = 'Expedition ' + cur.num + ': ' + cur.title;
+  if (P.expNew && now - cur.start < 24 * 3600e3)
+    out.push({ key: 'exp|new|' + cur.num, title: '◈ New expedition is live', body: name + ' has begun. Tap for milestones and tips, Traveller.', tag: 'atlas-exp', url: ATLAS_URL });
+  if (P.expEnd && cur.end && cur.end - now <= 24 * 3600e3) {
+    const h = Math.max(1, Math.round((cur.end - now) / 3600e3));
+    out.push({ key: 'exp|end|' + cur.num, title: '⏳ Expedition ends in ' + h + ' hour' + (h === 1 ? '' : 's'), body: name + ' closes soon. Claim your rewards before it ends.', tag: 'atlas-exp', url: ATLAS_URL });
+  }
   return out;
 }
