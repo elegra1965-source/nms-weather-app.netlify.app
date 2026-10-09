@@ -1,5 +1,5 @@
 // Atlas Weather Station — Service Worker (v4.0 redesign)
-const CACHE_NAME = 'nms-weather-v61';
+const CACHE_NAME = 'nms-weather-v62';
 
 // App shell — cached on install (every path here must exist, or install fails)
 const SHELL_ASSETS = [
