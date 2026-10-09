@@ -37,7 +37,17 @@
   .tiles{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;
     margin:0 -14px;padding:4px 14px 6px;scroll-padding:0 14px;flex-basis:100%}
   .tiles::-webkit-scrollbar{display:none}
-  .tiles>.tile{flex:0 0 78%;scroll-snap-align:center;min-height:0}
+  .tiles>.tile{flex:0 0 66%;scroll-snap-align:center;min-height:0;padding:12px 12px 10px;gap:8px;border-radius:14px}
+  /* compact readings: smaller numbers and dials, wind compass beside its numbers */
+  .tiles .big{font-size:30px!important}
+  .tiles .tile svg[height="96"],.tiles .tile svg[height="92"]{height:70px}
+  .tiles .wbx{flex-direction:row!important;align-items:center!important;gap:10px!important}
+  .tiles .wbx>div:first-child{width:64px!important;height:64px!important}
+  .tiles .wbx>div:first-child svg{width:64px;height:64px}
+  .tiles .tile svg[width="58"]{width:44px;height:56px}
+  .tiles .tile svg[width="86"]{width:64px;height:64px}
+  .tiles .tile div[style*="width:54px"]{width:40px!important;height:60px!important}
+  .tiles .scanline{font-size:11.5px}
   .tile-dots{display:flex;justify-content:center;flex-basis:100%;margin-top:-4px}
   .tile-dots button{padding:9px 5px;border:0;background:none;cursor:pointer}
   .tile-dots button::before{content:"";display:block;width:8px;height:8px;border-radius:4px;background:rgba(0,229,255,.3);transition:width .25s,background .25s}
