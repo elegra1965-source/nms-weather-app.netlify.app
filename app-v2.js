@@ -611,7 +611,7 @@
 
   // ---------- closed-app push (alerts even when ATLAS is closed) ----------
   // Sign-up goes to our Netlify function; a scheduled function checks the forecast every 30 min.
-  var VAPID_PUBLIC_KEY = 'BCdrW7jjy_MQDwt3V0rajNedogC0YsaYeny-QAdBMkH6g35-GhemfJSRJrF5yAI1R2MoUk8OefpT4t9dhoUzfGA';
+  var VAPID_PUBLIC_KEY = 'BCRPzjU-oj-cd7LV1ClApXKwZwAHfgUL7EjIEkBUB8qET6AGIscSWXUm_wIlm_xazaDCD-vmQo4Py5zqgaVsE00';
   var PUSH_API = '/api/push-subscribe';
   S.pushOn = lsGet('atlas-push-on', false);
   var pushReady = VAPID_PUBLIC_KEY && 'serviceWorker' in navigator && 'PushManager' in window;
