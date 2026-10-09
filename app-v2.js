@@ -593,7 +593,7 @@
       if (w.temp >= 35) once(today + '|heat|' + city, function () { notify('⚠ Extreme heat', deg(w.temp) + ' over ' + city + '. Stay hydrated, Traveller.', 'atlas-severe'); });
       if (w.temp <= -5) once(today + '|frost|' + city, function () { notify('⚠ Hard frost', deg(w.temp) + ' over ' + city + '. Watch for ice.', 'atlas-severe'); });
     }
-    if (P.rain && !isRain(w.code) && !isSnow(w.code) && H[1] && (H[1].pop >= 55 || isRain(H[1].code) || isSnow(H[1].code))) {
+    if (P.rain && !isRain(w.code) && !isSnow(w.code) && H[1] && (H[1].pop >= 55 || ((isRain(H[1].code) || isSnow(H[1].code)) && H[1].pop >= 35))) { // never on a low chance: the model's code and its % can disagree
       once(today + '|rain|' + city + '|' + H[1].hr, function () { var sn = isSnow(H[1].code); notify('◈ ' + (sn ? 'Snow' : 'Rain') + ' starting within the hour', (WMO[H[1].code] || (sn ? 'Snow' : 'Rain')) + ' likely over ' + city + ' (' + H[1].pop + '% chance). Take a coat, Traveller.', 'atlas-rain'); });
     }
     if (P.temp && H[3]) {

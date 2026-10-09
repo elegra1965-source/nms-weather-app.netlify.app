@@ -98,7 +98,7 @@ export function decide(s, sub, utcDate, utcHour) {
     if (s.temp >= 35) add(d + '|heat', '⚠ Extreme heat', u.deg(s.temp) + ' over ' + place + '. Stay hydrated, Traveller.', 'atlas-severe');
     if (s.temp <= -5) add(d + '|frost', '⚠ Hard frost', u.deg(s.temp) + ' over ' + place + '. Watch for ice.', 'atlas-severe');
   }
-  if (P.rain && !quiet && !isRain(s.code) && !isSnow(s.code) && H[1] && (H[1].pop >= 55 || isRain(H[1].code) || isSnow(H[1].code))) {
+  if (P.rain && !quiet && !isRain(s.code) && !isSnow(s.code) && H[1] && (H[1].pop >= 55 || ((isRain(H[1].code) || isSnow(H[1].code)) && H[1].pop >= 35))) { // never on a low chance: the forecast's weather code and its % can disagree
     const sn = isSnow(H[1].code);
     add(d + '|rain|' + H[1].hr, '◈ ' + (sn ? 'Snow' : 'Rain') + ' starting within the hour',
       (WMO[H[1].code] || (sn ? 'Snow' : 'Rain')) + ' likely over ' + place + ' (' + H[1].pop + '% chance). Take a coat, Traveller.', 'atlas-rain');
