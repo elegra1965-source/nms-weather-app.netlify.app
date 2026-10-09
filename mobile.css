@@ -1,0 +1,62 @@
+/* Atlas Weather Station — phone layout (2026-10-09). Desktop is untouched: everything here is
+   inside the 700px breakpoint, and the extra bits mobile.js adds are hidden above it. */
+.jumpbar,.m-tog,.tile-dots,.tile-swipe,.to-top,.sv-hint{display:none}
+
+@media (max-width:700px){
+  /* sticky jump bar */
+  .jumpbar{display:flex;position:sticky;top:0;z-index:60;gap:6px;margin:0 -14px;padding:8px 10px;
+    background:rgba(4,9,16,.92);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+    border-bottom:1px solid rgba(0,229,255,.18);overflow-x:auto;scrollbar-width:none}
+  .jumpbar::-webkit-scrollbar{display:none}
+  .jumpbar a{flex:1 0 auto;text-align:center;padding:9px 10px;border-radius:8px;border:1px solid rgba(0,229,255,.25);
+    font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--cyan);text-decoration:none;white-space:nowrap;transition:background .2s,border-color .2s,color .2s}
+  .jumpbar a.on{background:rgba(0,229,255,.14);border-color:var(--cyan);color:var(--white)}
+  #hero,#m-week,#m-haz,#radarPanel,#m-survey{scroll-margin-top:62px}
+
+  /* shared fold toggle */
+  .m-tog{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:11px 14px;border-radius:8px;cursor:pointer;
+    border:1px solid rgba(0,229,255,.3);background:rgba(0,229,255,.04);color:var(--cyan);font-family:var(--mono);font-size:11px;letter-spacing:2px;text-align:left}
+  .m-tog .chev{transition:transform .25s}
+  .m-open>.m-tog .chev,.m-open .m-tog .chev{transform:rotate(180deg)}
+
+  /* hero: biome + exosuit report fold away; smaller day-cycle dial */
+  .hero:not(.m-open) .biome,.hero:not(.m-open) .atlas{display:none}
+  .orbbox{transform:scale(.76);margin:-33px 0}
+  .hero-r{padding:0;gap:10px}
+
+  /* 7-day: three days, the rest on tap */
+  .week:not(.m-open) .drow:nth-child(n+4){display:none}
+  .week .m-tog{margin-top:10px}
+  .hourly .hwrap svg{min-height:90px}
+
+  /* hazards: one line when all is nominal */
+  .haz:not(.m-open) #hazRows{display:none}
+
+  /* readings: one swipeable row of tiles */
+  .tiles{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+    margin:0 -14px;padding:4px 14px 6px;scroll-padding:0 14px;flex-basis:100%}
+  .tiles::-webkit-scrollbar{display:none}
+  .tiles>.tile{flex:0 0 78%;scroll-snap-align:center;min-height:0}
+  .tile-dots{display:flex;justify-content:center;flex-basis:100%;margin-top:-4px}
+  .tile-dots button{padding:9px 5px;border:0;background:none;cursor:pointer}
+  .tile-dots button::before{content:"";display:block;width:8px;height:8px;border-radius:4px;background:rgba(0,229,255,.3);transition:width .25s,background .25s}
+  .tile-dots button.on::before{width:22px;background:var(--cyan);box-shadow:0 0 8px rgba(0,229,255,.6)}
+  .tile-swipe{display:block;flex-basis:100%;text-align:center;margin-top:-8px;font-family:var(--mono);font-size:10.5px;letter-spacing:3px;color:var(--text-dim)}
+
+  /* radar folds away until asked for */
+  #radarPanel:not(.m-open) .rd-map,#radarPanel:not(.m-open) .rd-ctrl,#radarPanel:not(.m-open) .rd-credit,#radarPanel:not(.m-open) .rd-key{display:none}
+  #radarPanel .m-tog{margin-top:4px}
+
+  /* survey: cards only; the full scan opens when you tap a world */
+  .sv-head p{display:none}
+  .survey:not(.m-open) .scan{display:none}
+  .sv-hint{display:block;margin-top:-4px;text-align:center;font-family:var(--mono);font-size:10.5px;letter-spacing:2px;color:var(--cyan)}
+  .survey.m-open .sv-hint{display:none}
+
+  /* back to top */
+  .to-top{display:flex;align-items:center;justify-content:center;position:fixed;right:14px;bottom:max(16px,env(safe-area-inset-bottom));z-index:70;
+    width:46px;height:46px;border-radius:50%;border:1px solid rgba(0,229,255,.5);background:rgba(4,9,16,.88);color:var(--cyan);font-size:20px;cursor:pointer;
+    opacity:0;pointer-events:none;transform:translateY(10px);transition:opacity .25s,transform .25s;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 0 16px rgba(0,229,255,.25)}
+  .to-top.show{opacity:1;pointer-events:auto;transform:none}
+}
+@media (max-width:700px) and (prefers-reduced-motion:reduce){.tile-dots button::before,.to-top,.jumpbar a,.m-tog .chev{transition:none}}
