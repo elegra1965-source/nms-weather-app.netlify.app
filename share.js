@@ -36,7 +36,8 @@
     // header
     x.textAlign = 'left'; x.fillStyle = '#00e5ff'; x.font = '700 30px Orbitron'; x.fillText('ATLAS WEATHER STATION', 140, 104);
     if (logo) x.drawImage(logo, 64, 58, 60, 60);
-    x.fillStyle = 'rgba(207,224,240,.7)'; x.font = '26px "Share Tech Mono"'; x.fillText('PLANETARY SCAN · ' + new Date().toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }).toUpperCase(), 140, 140);
+    x.fillStyle = 'rgba(207,224,240,.7)'; x.font = '26px "Share Tech Mono"'; var tid = ''; try { var tm = document.cookie.match(/(?:^|; )nmsTraveller=([^;]*)/); tid = tm ? (JSON.parse(decodeURIComponent(tm[1])).n || '') : ''; } catch (e) {}
+    x.fillText((tid ? 'TRAVELLER ' + tid.toUpperCase().slice(0, 24) + ' · ' : 'PLANETARY SCAN · ') + new Date().toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }).toUpperCase(), 140, 140);
 
     // the planet: biome image clipped to a circle, with day ring
     var cx = W / 2, cy = 560, r = 300;
