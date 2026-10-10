@@ -11,3 +11,14 @@
   for = "/sw.js"
   [headers.values]
     Cache-Control = "no-cache"
+
+# 2026-10-10: the Theme Pack's "Planet of the day" wallpaper (theme.nomansskyhub.app) reads
+# today's survey data and planet pictures from here, so they may be loaded from other sites
+[[headers]]
+  for = "/data/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+[[headers]]
+  for = "/hd/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
