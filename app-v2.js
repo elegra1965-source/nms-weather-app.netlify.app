@@ -641,11 +641,12 @@
       return false;
     } catch (e) { return false; }
   }
-  function pushSig(sub) { return JSON.stringify([VAPID_PUBLIC_KEY.slice(0, 12), sub.endpoint, Math.round(S.loc.lat * 10), Math.round(S.loc.lon * 10), S.loc.city || '', S.prefs, S.unit]); }
+  function pushSig(sub) { return JSON.stringify([VAPID_PUBLIC_KEY.slice(0, 12), sub.endpoint, Math.round(S.loc.lat * 10), Math.round(S.loc.lon * 10), S.loc.city || '', S.prefs, S.unit, curLang()]); }
+  function curLang() { try { return (window.NMS_LANG && NMS_LANG()) || 'en'; } catch (e) { return 'en'; } }
   function setPushOn(on) { S.pushOn = on; lsSet('atlas-push-on', on); if (!on) lsSet('atlas-push-sig', ''); renderPerm(); }
   function sendSub(sub) {
     if (!S.loc) return Promise.resolve(false);
-    var body = { sub: sub.toJSON(), lat: S.loc.lat, lon: S.loc.lon, place: S.loc.city || '', prefs: S.prefs, unit: S.unit };
+    var body = { sub: sub.toJSON(), lat: S.loc.lat, lon: S.loc.lon, place: S.loc.city || '', prefs: S.prefs, unit: S.unit, lang: curLang() };
     return fetch(PUSH_API, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) })
       .then(function (r) { if (!r.ok) throw new Error('push-subscribe ' + r.status); lsSet('atlas-push-sig', pushSig(sub)); setPushOn(true); return true; });
   }
@@ -667,6 +668,8 @@
       }).catch(function (e) { console.warn('push sync', e); setPushOn(false); checkAlerts(); });
     }, 1500);
   }
+  // alerts arrive in the language picked with 🌐, so tell the server when it changes
+  document.addEventListener('nms-lang', function () { syncPush(); });
   function unsubscribePush() {
     if (!pushReady) { setPushOn(false); return Promise.resolve(); }
     return navigator.serviceWorker.ready.then(function (r) { return r.pushManager.getSubscription(); }).then(function (sub) {

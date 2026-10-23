@@ -3,7 +3,7 @@
 // so it never triggers a site deploy.
 import { getStore } from '@netlify/blobs';
 import webpush from 'web-push';
-import { STORE, summarise, decide, pruneSent, parseWikiExpeditions, expeditionAlerts } from './lib/alerts.mjs';
+import { STORE, summarise, decide, pruneSent, parseWikiExpeditions, expeditionAlerts, trendAlerts, themeAlerts, APP_URL } from './lib/alerts.mjs';
 
 const BATCH = 40; // locations per Open-Meteo request
 
@@ -34,9 +34,10 @@ export default async () => {
 
   const subs = (await Promise.all(keys.map(async k => ({ k, rec: await store.get(k, { type: 'json' }) })))).filter(x => x.rec);
 
-  // one forecast per rounded location, not per person
+  const appOf = rec => rec.app || 'weather';
+  // one forecast per rounded location, not per person (Weather subscribers only)
   const locMap = new Map();
-  for (const s of subs) { const id = s.rec.lat + ',' + s.rec.lon; if (!locMap.has(id)) locMap.set(id, { lat: s.rec.lat, lon: s.rec.lon }); }
+  for (const s of subs) { if (appOf(s.rec) !== 'weather') continue; const id = s.rec.lat + ',' + s.rec.lon; if (!locMap.has(id)) locMap.set(id, { lat: s.rec.lat, lon: s.rec.lon }); }
   const locs = [...locMap.entries()];
   const wxById = new Map();
   for (let i = 0; i < locs.length; i += BATCH) {
@@ -56,19 +57,33 @@ export default async () => {
     } catch (e) { console.log('push-check: wiki failed', e.message); }
   }
 
+  // Galactic Map trending board and Theme Pack news, once per run, only if someone wants them
+  const getJson = async (url) => {
+    try { const r = await fetch(url, { signal: AbortSignal.timeout(10000) }); return r.ok ? await r.json() : null; }
+    catch (e) { console.log('push-check: fetch failed', url, e.message); return null; }
+  };
+  const trend = subs.some(s => appOf(s.rec) === 'map') ? await getJson('https://map.nomansskyhub.app/.netlify/functions/trending') : null;
+  const news = subs.some(s => appOf(s.rec) === 'theme') ? await getJson('https://theme.nomansskyhub.app/updates.json') : null;
+
   const now = new Date(), utcDate = now.toISOString().slice(0, 10), utcHour = now.getUTCHours();
   let sentCount = 0, removed = 0;
   await Promise.all(subs.map(async ({ k, rec }) => {
-    const s = wxById.get(rec.lat + ',' + rec.lon);
+    const app = appOf(rec);
     rec.sent = pruneSent(rec.sent);
-    const alerts = (s ? decide(s, rec, utcDate, utcHour) : [])
-      .concat(expeditionAlerts(expRows, rec.prefs).filter(a => !rec.sent[a.key]));
+    let alerts = [];
+    if (app === 'weather') {
+      const s = wxById.get(rec.lat + ',' + rec.lon);
+      alerts = (s ? decide(s, rec, utcDate, utcHour) : []).concat(expeditionAlerts(expRows, rec));
+    } else if (app === 'hub' || app === 'atlas') alerts = expeditionAlerts(expRows, rec, Date.now(), Math.random, APP_URL[app]);
+    else if (app === 'map' && rec.prefs.trend) alerts = trendAlerts(trend, rec);
+    else if (app === 'theme' && rec.prefs.theme) alerts = themeAlerts(news, rec);
     if (!alerts.length) return;
     let changed = false, gone = false;
     for (const a of alerts) {
       try {
         await webpush.sendNotification(rec.sub, JSON.stringify({ title: a.title, body: a.body, tag: a.tag, url: a.url || '/' }), { TTL: 3600, urgency: a.tag === 'atlas-severe' ? 'high' : 'normal' });
         rec.sent[a.key] = Date.now(); changed = true; sentCount++;
+        if (a.pool) { rec.lines = rec.lines || {}; rec.lines[a.pool] = a.idx; } // so the next one says something different
       } catch (e) {
         if (e.statusCode === 404 || e.statusCode === 410) { gone = true; break; } // phone unsubscribed or app removed
         console.log('push-check: send failed', e.statusCode || e.message);
