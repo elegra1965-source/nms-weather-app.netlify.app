@@ -212,7 +212,7 @@
     $('biomeTitle').textContent = b.title; $('biomeDesc').textContent = b.desc;
     $('atlasLine').textContent = atlasLine(w, b, S.aqi);
     $('tagClass').textContent = 'CLASS · ' + b.cls;
-    document.title = cv(w.temp) + '° ' + (WMO[w.code] || '') + ' · ' + w.city + ' — Atlas Weather Station';
+    document.title = cv(w.temp) + '° ' + (WMO[w.code] || '') + ' · ' + w.city + ' — NMS Weather';
     renderRing(w); renderHazards(w); renderHourly(); renderDays(w); renderTiles(w); renderStorm(w); renderShare(w); renderRadar();
     updateClockAndAge();
   }
