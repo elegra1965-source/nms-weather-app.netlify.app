@@ -579,6 +579,7 @@
   }
   function notify(title, body, tag) {
     if (perm() !== 'granted') return;
+    if (window.NMS_TR) { title = NMS_TR(title); body = NMS_TR(body); }
     var opt = { body: body, icon: '/icon-192.png', badge: '/badge-96.png', tag: tag || 'atlas' };
     if ('serviceWorker' in navigator) navigator.serviceWorker.ready.then(function (r) { r.showNotification(title, opt); }).catch(function () { try { new Notification(title, opt); } catch (e) {} });
     else try { new Notification(title, opt); } catch (e) {}

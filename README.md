@@ -22,9 +22,12 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 - **Search or Scan.** Type a city, or press Scan with the box empty to find your location. Share a city with `?city=London`.
 - °C/°F, 12/24-hour clock and an effects on/off switch for battery or motion sensitivity.
 - **Calm mode.** A small **Calm** switch in the bottom-left corner swaps the patterned and image backgrounds for a plain dark one, for anyone who finds the page busy. It's shared across the whole No Man's Sky Hub family (one switch turns it on for every site) and lives in `calm.js`.
+- **Your language.** The 🌐 button switches the page between English, Español, Deutsch, Nederlands, Polski, Français, Português (Brasil) and Italiano. Alerts are written in your language too. The choice is shared by the whole No Man's Sky Hub family: pick it once and every site follows (a small cookie on `.nomansskyhub.app`, nothing goes to a server). On a first visit the page offers your phone's language once instead of switching by itself. Names, glyphs and portal addresses stay as they are. It lives in `lang.js` (the same file on every site), with one small pack per language in `lang/` and a font for Polish letters in `fonts/`.
 - **Phone layout:** on screens 700px wide or less, a sticky jump bar (NOW · WEEK · HAZARDS · RADAR · WORLDS), the nine readings as one swipeable row with dots, and folds for the exosuit report, days 4–7, hazard readings (opened automatically when the shield drops below 100%), the rain radar and each world's full scan (opens when you tap a world). Plus a back-to-top button. It lives in `mobile.css` and `mobile.js`; desktop is unchanged. The app icon has maskable versions (`icon-maskable-*.png`) so Android doesn't show it on a white plate.
 
 ![Daily planetary survey: a real player-charted world with portal glyphs and hex address](screenshots/02-planetary-survey.jpg)
+
+<img src="screenshots/03-languages.jpg" alt="NMS Weather on a phone: the language picker (left) and the page in Polski (right)" width="560">
 
 ## How it's built
 
@@ -38,6 +41,7 @@ A plain HTML/CSS/JavaScript site with no build step and no framework, plus two s
 | `netlify/functions/push-subscribe.mjs` | Saves or deletes an alert sign-up (Netlify Blobs) |
 | `netlify/functions/push-check.mjs` | Runs every 30 minutes, checks the forecast and sends alerts |
 | `privacy.html` | What is stored and how to remove it |
+| `lang.js`, `lang/`, `fonts/` | Language picker and translations, shared by every Hub site |
 | `data/haven-worlds.json` | Snapshot of real planets from Voyager's Haven used by the daily survey |
 | `icons/`, `hd/`, `glyphs/`, `fonts/` | Weather icons, planet images, portal glyphs, NMS alphabet font |
 
