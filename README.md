@@ -56,6 +56,10 @@ A plain HTML/CSS/JavaScript site with no build step and no framework, plus two s
 - Hazard and resource icons and planet images: the [No Man's Sky Wiki](https://nomanssky.fandom.com)
 - NMS Alphabet font by seontonppa (built with FontStruct), used with permission
 
+## Using this code?
+
+It's free to use under the MIT licence. If you use any of it in your own project, site, video or post, please credit **elegra1965 / No Man's Sky Hub** with a link to [nomansskyhub.app](https://nomansskyhub.app). The MIT licence also asks you to keep the copyright notice in `LICENSE` with any copied code.
+
 ## Licence
 
 The code is MIT licensed (see `LICENSE`). Game names, icons, glyphs and imagery belong to Hello Games and are not covered by that licence.
