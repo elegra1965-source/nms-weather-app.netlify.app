@@ -114,6 +114,8 @@ img{max-width:100%}
 .brand-clock{font-family:var(--mono);font-size:12px;letter-spacing:2px;color:var(--text-dim);white-space:nowrap;display:block}
 /* 2026-10-24: name + clock were wider than a 320px phone (and Polish 'LOKALNIE' at 360), giving sideways scroll */
 @media(max-width:374px){.brand{gap:10px}.mark,.mark img{width:40px;height:40px}.brand-name{font-size:14px;letter-spacing:1px}.brand-clock{font-size:11px;letter-spacing:1px}}
+/* 2026-10-24: on phones the search box gets its own full-width row (Scan + locate underneath), so its hint text fits */
+@media(max-width:600px){.top .search{flex:1 1 100%;flex-wrap:wrap}.top .search input{flex:1 1 100%}.top .search .btn-primary{flex:1 1 auto}}
 @media(max-width:400px){.brand>span{min-width:0}.brand-clock{white-space:normal}footer .fl .btn{min-width:0;max-width:100%;height:auto;min-height:44px;padding-top:8px;padding-bottom:8px;white-space:normal;text-align:center}}
 .search{display:flex;gap:8px;flex:999 1 240px;min-width:0}
 .search input{flex:1 1 auto;min-width:0;height:44px;padding:0 14px;border-radius:8px;border:1px solid var(--border);background:rgba(0,0,0,.35);color:var(--white);font-family:var(--body);font-size:16px}
@@ -424,6 +426,11 @@ body.no-fx .rd-sweep,body.no-fx .rd-pin::after{animation:none;display:none}
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
       </button>
     </form>
+    <script>/* 2026-10-24: the long hint only where it fits, else the short 'Search a city' (both are in every language pack; lang.js translates the placeholder) */
+    (function(){var i=document.getElementById('loc');if(!i)return;var L='Search a city, or press Scan to find you…',S='Search a city',c=document.createElement('canvas').getContext('2d');
+    function fit(){if(!i.clientWidth)return;var st=getComputedStyle(i);c.font=st.fontWeight+' '+st.fontSize+' '+st.fontFamily;var av=i.clientWidth-parseFloat(st.paddingLeft)-parseFloat(st.paddingRight)-6;var t=window.NMS_T?NMS_T(L):L;var w=c.measureText(t).width<=av?L:S;if(i.getAttribute('data-ph')!==w){i.setAttribute('data-ph',w);i.setAttribute('placeholder',w);}}
+    fit();window.addEventListener('load',fit);document.addEventListener('nms-lang',function(){setTimeout(fit,0);});if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit);
+    if(window.ResizeObserver)new ResizeObserver(fit).observe(i);else window.addEventListener('resize',fit);})();</script>
     <div class="tools">
       <div class="seg" role="group" aria-label="Units">
         <button type="button" id="unitC" aria-pressed="true">°C</button>
