@@ -30,6 +30,12 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 
 <img src="screenshots/03-languages.jpg" alt="NMS Weather on a phone: the language picker (left) and the page in Polski (right)" width="560">
 
+## New here? Take the tour
+
+First-time visitors get a small **New here? ▶ Take the tour / Dive in** box (shown once, never again). The tour dims the page and spotlights city search, your location, the planet scan, alerts, the jump bar and Share, one step at a time with Back / Next / Skip. Replay it any time from the **▷ TOUR** button. The phone's Back button closes it, and it's translated into every language the site offers. Shared `nms-tour.js`, the same file on every nomansskyhub.app site.
+
+<img src="screenshots/04-tour.jpg" alt="Left: the New here? Take the tour prompt. Right: tour step 3 of 6, Your planet scan, spotlighting the scan card" width="560">
+
 ## How it's built
 
 A plain HTML/CSS/JavaScript site with no build step and no framework, plus two small Netlify functions for alerts. Deployed on Netlify straight from this repo.
