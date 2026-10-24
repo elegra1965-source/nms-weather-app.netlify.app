@@ -9,6 +9,7 @@
 <title>NMS Weather — Your Weather as a No Man's Sky Planet Scan</title>
 <script src="/calm.js?v=1"></script>
 <script src="/lang.js?v=2"></script>
+<script src="/nms-update.js?v=1" defer></script>
 <meta name="description" content="Your real weather, read like a No Man's Sky planet scan. Live forecast, exosuit hazards, weather alerts and 8 real community-charted worlds every day. Free, no account, installs as an app.">
 <link rel="manifest" href="/manifest.json">
 <link rel="icon" href="/favicon.png" type="image/png" sizes="32x32">
@@ -111,6 +112,9 @@ img{max-width:100%}
 .mark img{width:48px;height:48px;object-fit:contain;animation:markGlow 2.6s ease-in-out infinite}
 .brand-name{font-family:var(--disp);font-weight:800;font-size:15px;letter-spacing:2px;color:var(--white);text-transform:uppercase;display:block}
 .brand-clock{font-family:var(--mono);font-size:12px;letter-spacing:2px;color:var(--text-dim);white-space:nowrap;display:block}
+/* 2026-10-24: name + clock were wider than a 320px phone (and Polish 'LOKALNIE' at 360), giving sideways scroll */
+@media(max-width:374px){.brand{gap:10px}.mark,.mark img{width:40px;height:40px}.brand-name{font-size:14px;letter-spacing:1px}.brand-clock{font-size:11px;letter-spacing:1px}}
+@media(max-width:400px){.brand>span{min-width:0}.brand-clock{white-space:normal}footer .fl .btn{min-width:0;max-width:100%;height:auto;min-height:44px;padding-top:8px;padding-bottom:8px;white-space:normal;text-align:center}}
 .search{display:flex;gap:8px;flex:999 1 240px;min-width:0}
 .search input{flex:1 1 auto;min-width:0;height:44px;padding:0 14px;border-radius:8px;border:1px solid var(--border);background:rgba(0,0,0,.35);color:var(--white);font-family:var(--body);font-size:16px}
 .search input::placeholder{color:rgba(207,224,240,.45)}
