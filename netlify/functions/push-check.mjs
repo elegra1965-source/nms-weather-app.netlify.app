@@ -3,7 +3,7 @@
 // so it never triggers a site deploy.
 import { getStore } from '@netlify/blobs';
 import webpush from 'web-push';
-import { STORE, summarise, decide, pruneSent, parseWikiExpeditions, expeditionAlerts, trendAlerts, themeAlerts, APP_URL } from './lib/alerts.mjs';
+import { STORE, summarise, decide, pruneSent, parseWikiExpeditions, expeditionAlerts, trendAlerts, themeAlerts, newsAlerts, APP_URL } from './lib/alerts.mjs';
 
 const BATCH = 40; // locations per Open-Meteo request
 
@@ -65,6 +65,9 @@ export default async () => {
   const trend = subs.some(s => appOf(s.rec) === 'map') ? await getJson('https://map.nomansskyhub.app/.netlify/functions/trending') : null;
   const news = subs.some(s => appOf(s.rec) === 'theme') ? await getJson('https://theme.nomansskyhub.app/updates.json') : null;
 
+  // major app updates list, read from GitHub so adding one never needs a deploy
+  const whatsNew = await getJson('https://raw.githubusercontent.com/elegra1965-source/nms-weather-app.netlify.app/main/data/whats-new.json');
+
   const now = new Date(), utcDate = now.toISOString().slice(0, 10), utcHour = now.getUTCHours();
   let sentCount = 0, removed = 0;
   await Promise.all(subs.map(async ({ k, rec }) => {
@@ -77,6 +80,7 @@ export default async () => {
     } else if (app === 'hub' || app === 'atlas') alerts = expeditionAlerts(expRows, rec, Date.now(), Math.random, APP_URL[app]);
     else if (app === 'map' && rec.prefs.trend) alerts = trendAlerts(trend, rec);
     else if (app === 'theme' && rec.prefs.theme) alerts = themeAlerts(news, rec);
+    alerts = alerts.concat(newsAlerts(whatsNew, rec, app));
     if (!alerts.length) return;
     let changed = false, gone = false;
     for (const a of alerts) {

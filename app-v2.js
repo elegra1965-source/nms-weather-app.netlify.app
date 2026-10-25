@@ -78,7 +78,7 @@
   var S = {
     unit: lsGet('atlas-unit', 'C'), metric: 'temp', fx: lsGet('atlas-fx', !window.matchMedia('(prefers-reduced-motion: reduce)').matches),
     loc: lsGet('atlas-last-loc', null), wx: null, aqi: null, updated: null, worlds: [], world: 0,
-    prefs: Object.assign({ rain: true, severe: true, temp: true, daily: false, tomorrow: false, survey: false, expNew: false, expEnd: false }, lsGet('atlas-alert-prefs-v2', {})),
+    prefs: Object.assign({ rain: true, severe: true, temp: true, daily: false, tomorrow: false, survey: false, expNew: false, expEnd: false, news: true }, lsGet('atlas-alert-prefs-v2', {})),
     alertsOn: lsGet('atlas-alerts-on', false)
   };
 
@@ -605,7 +605,8 @@
     ['tomorrow', '🌙', 'Evening outlook', 'Tomorrow’s forecast, rain chance and wind after 18:00'],
     ['survey', '◈', 'New planetary survey', 'When today’s 8 worlds refresh at 00:00 UTC'],
     ['expNew', '🚀', 'New expedition live', 'The day a new No Man’s Sky expedition starts'],
-    ['expEnd', '⏳', 'Expedition ending', 'A last call 24 hours before the current expedition closes']
+    ['expEnd', '⏳', 'Expedition ending', 'A last call 24 hours before the current expedition closes'],
+    ['news', '✨', 'Major app updates', 'Big new features on the Hub sites only, never bug fixes. A few times a month at most']
   ];
   function renderAlertPanel() {
     $('alertRows').innerHTML = ALERT_ROWS.map(function (r) {

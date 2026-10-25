@@ -33,7 +33,7 @@ export async function keyFor(endpoint) {
 // Round to 0.1 degree (about 11 km) so we never keep anyone's exact position.
 export const roundCoord = n => Math.round(Number(n) * 10) / 10;
 
-export const DEFAULT_PREFS = { rain: true, severe: true, temp: true, daily: false, tomorrow: false, survey: false, expNew: false, expEnd: false };
+export const DEFAULT_PREFS = { rain: true, severe: true, temp: true, daily: false, tomorrow: false, survey: false, expNew: false, expEnd: false, news: true };
 
 export function cleanPrefs(p) {
   const out = {};
@@ -152,7 +152,7 @@ export function tomorrowText(t, u, lang) {
 export function pruneSent(sent, now = Date.now()) {
   const out = {};
   for (const [k, t] of Object.entries(sent || {})) {
-    const keep = k.startsWith('theme|') ? 366 : k.startsWith('trend|') ? 8 : 2;
+    const keep = k.startsWith('theme|') ? 366 : k.startsWith('news|') ? 30 : k.startsWith('trend|') ? 8 : 2;
     if (t >= now - keep * 86400e3) out[k] = t;
   }
   return out;
@@ -160,7 +160,7 @@ export function pruneSent(sent, now = Date.now()) {
 
 // Which app a subscription belongs to. Weather is the original; the others only get their own alerts.
 export const APPS = ['weather', 'hub', 'atlas', 'map', 'theme'];
-const APP_PREFS = { hub: { expNew: true, expEnd: true }, atlas: { expNew: true, expEnd: true }, map: { trend: true }, theme: { theme: true } };
+const APP_PREFS = { hub: { expNew: true, expEnd: true, news: true }, atlas: { expNew: true, expEnd: true, news: true }, map: { trend: true, news: true }, theme: { theme: true, news: true } };
 export function cleanApp(a) { return APPS.includes(a) ? a : 'weather'; }
 export function cleanPrefsFor(app, p) {
   if (app === 'weather') return cleanPrefs(p);
@@ -237,4 +237,30 @@ export function themeAlerts(updates, sub, rnd = Math.random) {
   const fresh = updates.filter(x => x && x.id && Date.parse(x.date + 'T23:59:59Z') >= since).slice(-1); // newest only, dated on/after sign-up day
   for (const x of fresh) add('theme|' + x.id, X.t.theme, String(x[X.lang] || (X.lang === 'en' && x.en) || X.b.theme).slice(0, 160), 'nms-theme', 'theme', { url: 'https://theme.nomansskyhub.app/' });
   return out;
+}
+
+// ---------- Major app updates (2026-10-25, Tony: "only major updates, not bug fixes") ----------
+// data/whats-new.json in the Weather repo = [{ id, date: "YYYY-MM-DD", apps: ["weather"|"hub"|"atlas"|"map"|"theme"],
+//   url?, text: { en, es, de, nl, pl, fr, pt-BR, it } }]. Only ADD an entry for a real new feature.
+// The 30-minute checker reads it straight from GitHub, so adding one costs no deploy.
+// Each subscriber gets: only entries for their own app, dated in the last 3 days and on/after the day they
+// signed up, the newest one only, never more than one update alert a week, only between 10:00 and 20:00 UTC,
+// and never if they switched "Major app updates" off (Weather settings).
+const NEWS_T = { en: 'What’s new', es: 'Novedades', de: 'Neu', nl: 'Nieuw', pl: 'Nowości', fr: 'Nouveautés', 'pt-BR': 'Novidades', it: 'Novità' };
+const APP_NAME = { weather: 'NMS Weather', hub: 'No Man’s Sky Hub', atlas: 'ATLAS', map: 'Galactic Map', theme: 'Theme Pack' };
+export function newsAlerts(entries, sub, app, now = Date.now()) {
+  if (!Array.isArray(entries) || !sub || (sub.prefs && sub.prefs.news === false)) return [];
+  const h = new Date(now).getUTCHours();
+  if (h < 10 || h >= 20) return [];
+  const sent = sub.sent || {};
+  if (Object.entries(sent).some(([k, t]) => k.startsWith('news|') && t > now - 7 * 86400e3)) return [];
+  const since = new Date(sub.created || 0).toISOString().slice(0, 10);
+  const fresh = entries.filter(e => e && e.id && e.text && e.text.en && Array.isArray(e.apps) && e.apps.includes(app)
+    && /^\d{4}-\d{2}-\d{2}$/.test(e.date) && e.date >= since && Date.parse(e.date + 'T00:00:00Z') > now - 3 * 86400e3 && !sent['news|' + e.id])
+    .sort((a, b) => (a.date < b.date ? -1 : 1));
+  const e = fresh[fresh.length - 1];
+  if (!e) return [];
+  const lang = cleanLang(sub.lang);
+  return [{ key: 'news|' + e.id, title: '✨ ' + NEWS_T[lang] + ' · ' + APP_NAME[app], body: String(e.text[lang] || e.text.en).slice(0, 180),
+    tag: 'nms-news', pool: null, idx: -1, url: e.url || APP_URL[app] }];
 }

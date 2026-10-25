@@ -1,0 +1,20 @@
+[
+ {
+  "id": "2026-10-25-moon",
+  "date": "2026-10-25",
+  "apps": [
+   "weather"
+  ],
+  "url": "/",
+  "text": {
+   "en": "Tonight's real moon phase is now on the weather card. Tap the moon to scan it.",
+   "es": "La fase real de la luna de esta noche ya aparece en la tarjeta del tiempo. Toca la luna para escanearla.",
+   "de": "Die echte Mondphase von heute Nacht ist jetzt auf der Wetterkarte. Tippe auf den Mond, um ihn zu scannen.",
+   "nl": "De echte maanfase van vannacht staat nu op de weerkaart. Tik op de maan om hem te scannen.",
+   "pl": "Prawdziwa faza Księżyca na dziś jest teraz na karcie pogody. Dotknij Księżyca, aby go zeskanować.",
+   "fr": "La vraie phase de la lune de ce soir est maintenant sur la carte météo. Touchez la lune pour la scanner.",
+   "pt-BR": "A fase real da lua desta noite agora aparece no cartão do tempo. Toque na lua para escaneá-la.",
+   "it": "La vera fase lunare di stasera ora è sulla scheda meteo. Tocca la luna per scansionarla."
+  }
+ }
+]
