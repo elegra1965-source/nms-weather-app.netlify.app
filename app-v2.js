@@ -17,6 +17,49 @@
   var HD = function (k) { return '/hd/hd-' + k + '.jpg'; };
   var CARD = function (k) { return '/hd/card-' + k + '.jpg'; };
   var WX_ICON = { sun: '/icons/32.png', moon: '/icons/31.png', cloud: '/icons/26.png', partly: '/icons/30.png', rain: '/icons/12.png', storm: '/icons/4.png', snow: '/icons/14.png', fog: '/icons/26.png' };
+
+  /* Real moon phase (2026-10-25): night icon shows tonight's actual phase (same worldwide), turned upside down south of the equator. Tap it for the phase name + % lit. */
+  var MOON = null, moonLat = 50, moonImg = new Image();
+  function moonPhase(t) {
+    var d = (t - Date.UTC(2000, 0, 1, 12)) / 864e5, r = Math.PI / 180;
+    var g = (357.529 + 0.98560028 * d) * r, sl = 280.459 + 0.98564736 * d + 1.915 * Math.sin(g) + 0.020 * Math.sin(2 * g);
+    var M = (134.963 + 13.064993 * d) * r, D = (297.850 + 12.190749 * d) * r, F = (93.272 + 13.229350 * d) * r;
+    var ml = 218.316 + 13.176396 * d + 6.289 * Math.sin(M) + 1.274 * Math.sin(2 * D - M) + 0.658 * Math.sin(2 * D) + 0.214 * Math.sin(2 * M) - 0.186 * Math.sin(g) - 0.114 * Math.sin(2 * F);
+    var e = ((ml - sl) % 360 + 360) % 360;
+    return { e: e, k: (1 - Math.cos(e * r)) / 2, wax: e < 180 };
+  }
+  function moonName(p) {
+    if (p.k >= 0.98) return 'Full Moon';
+    if (p.k <= 0.02) return 'New Moon';
+    if (Math.abs(p.k - 0.5) < 0.04) return p.wax ? 'First Quarter' : 'Last Quarter';
+    return (p.wax ? 'Waxing ' : 'Waning ') + (p.k < 0.5 ? 'Crescent' : 'Gibbous');
+  }
+  function drawMoon() {
+    if (!moonImg.naturalWidth) return;
+    var p = moonPhase(Date.now()), c = document.createElement('canvas'); c.width = c.height = 256;
+    var x = c.getContext('2d'), R = 64.6, rx = R * Math.abs(Math.cos(p.e * Math.PI / 180));
+    x.drawImage(moonImg, 0, 0, 256, 256);
+    x.save(); x.translate(127.5, 127.5);
+    if (moonLat < 0) x.rotate(Math.PI);      // southern hemisphere sees it flipped
+    if (!p.wax) x.scale(-1, 1);              // waxing lit on the right, waning on the left
+    x.beginPath(); x.arc(0, 0, R, -Math.PI / 2, Math.PI / 2, true);
+    x.ellipse(0, 0, rx, R, 0, Math.PI / 2, -Math.PI / 2, p.k < 0.5);
+    x.closePath(); x.fillStyle = 'rgba(4,7,16,.9)'; x.fill(); x.restore();
+    var old = WX_ICON.moon; MOON = p; WX_ICON.moon = c.toDataURL('image/png');
+    document.querySelectorAll('img').forEach(function (im) { if (im.getAttribute('src') === old) im.src = WX_ICON.moon; });
+  }
+  moonImg.onload = drawMoon; moonImg.src = '/icons/moon-full.png';
+  function moonTap() {
+    var ic = $('condIcon'), lab = $('condLabel');
+    if (!MOON || ic.getAttribute('src') !== WX_ICON.moon || lab.dataset.moon) return;
+    var T = window.NMS_T || function (s) { return s; }, keep = lab.textContent, p = MOON;
+    var pct = p.k > 0.999 ? 100 : p.k < 0.001 ? 0 : Math.min(99, Math.max(1, Math.round(p.k * 100)));
+    var fx = function (t) { lab.textContent = t; lab.classList.remove('moonfx'); void lab.offsetWidth; lab.classList.add('moonfx'); };
+    lab.dataset.moon = '1'; fx('◈ ' + T('Scanning…'));
+    setTimeout(function () { if (lab.dataset.moon) fx('◈ ' + T(moonName(p)) + ' · ' + pct + '%'); }, 700);
+    setTimeout(function () { if (lab.dataset.moon) { lab.classList.remove('moonfx'); lab.textContent = keep; delete lab.dataset.moon; } }, 4700);
+  }
+
   var HAZ_ICON = { heat: '/icons/hz-tile-heat.webp', cold: '/icons/hz-tile-cold.webp', rad: '/icons/hz-tile-radioactive.webp', tox: '/icons/hz-tile-toxic.webp' };
   var RES = {
     'Star Bulb': '/plant-star-bulb-hot.webp', 'Faecium': '/plant-star-bulb.webp', 'Frost Crystal': '/plant-frost-crystal.webp', 'Frozen Tubers': '/plant-frozen-tubers.webp',
@@ -205,8 +248,11 @@
     $('locLabel').textContent = 'Live · ' + place;
     $('tempNow').textContent = cv(w.temp); $('tempUnit').textContent = F() ? '°F' : '°C';
     var kind = iconKind(w.code, w.isDay);
+    if (w.lat != null) moonLat = w.lat;
+    drawMoon();
     $('condIcon').src = WX_ICON[kind]; $('condIcon').alt = '';
-    $('condLabel').textContent = WMO[w.code] || '—';
+    $('condIcon').classList.toggle('moontap', kind === 'moon');
+    var cl = $('condLabel'); delete cl.dataset.moon; cl.textContent = WMO[w.code] || '—';
     var d0 = w.days[0] || { hi: w.temp, lo: w.temp };
     $('hiLo').textContent = 'H ' + deg(d0.hi) + ' · L ' + deg(d0.lo) + ' · FEELS ' + deg(w.feels);
     $('biomeTitle').textContent = b.title; $('biomeDesc').textContent = b.desc;
@@ -710,6 +756,7 @@
   };
   $('testAlert').onclick = function () { if (perm() !== 'granted') { toast('Turn on alerts first'); return; } notify('◈ ATLAS test alert', 'Notifications are working. See you out there, Traveller.', 'atlas-test'); };
   document.querySelectorAll('.tabs button').forEach(function (bt) { bt.onclick = function () { S.metric = bt.getAttribute('data-m'); renderHourly(); }; });
+  $('condIcon').addEventListener('click', moonTap);
   $('cards').addEventListener('click', function (e) { var c = e.target.closest('.wcard'); if (c) selectWorld(+c.getAttribute('data-i')); });
 
   // install prompt

@@ -11,6 +11,10 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 ## What it does
 
 - **Live weather as a biome.** Storms read as Extreme, snow or freezing as Frozen, rain or fog as Marsh, heat as Scorched, poor air as Toxic, high UV as Radioactive, clear nights as Barren, and everything else as Lush. The hero sky, rain/snow/lightning effects and planet image all change to match.
+- **Tonight's real moon.** On clear nights the icon next to the weather is the real Moon in tonight's actual phase (worked out from the date, accurate to well under an hour, the same everywhere on Earth), turned upside down for anyone south of the equator, just as they see it. Tap it to scan: "◈ Scanning…", then the phase name and how much is lit, e.g. "◈ Full Moon · 99%", in your language. The night icons in the 24-hour forecast use it too. Moon picture made from the NASA lunar map shipped with [three.js](https://github.com/mrdoob/three.js) (`icons/moon-full.png`).
+
+  <img src="screenshots/06-real-moon.jpg" alt="The weather card on a phone at night: the full Moon icon next to the temperature, tapped, showing Full Moon 99%" width="390">
+
 - **Exosuit hazard protection.** "Your exosuit readings are…" Heat, cold, UV and air quality shown as shield bars using the game's own hazard icons.
 - **Forecast.** Next 24 hours (temperature, rain and wind charts with sunrise/sunset), a 7-day range view, and 9 tiles grouped by what they tell you: how it feels (feels like, wind compass, humidity and dew point), the sky (rain, pressure trend, visibility), then sun and air (UV, air quality, sun path).
 - **Rain radar.** An animated map of the last two hours of rain and snow around you, with play/pause and a time slider (radar by [RainViewer](https://www.rainviewer.com), map by Esri/OpenStreetMap).
