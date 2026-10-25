@@ -47,8 +47,17 @@
     x.closePath(); x.fillStyle = 'rgba(4,7,16,.9)'; x.fill(); x.restore();
     var old = WX_ICON.moon; MOON = p; WX_ICON.moon = c.toDataURL('image/png');
     document.querySelectorAll('img').forEach(function (im) { if (im.getAttribute('src') === old) im.src = WX_ICON.moon; });
+    if ($('condIcon').classList.contains('moontap')) moonHint();
   }
   moonImg.onload = drawMoon; moonImg.src = '/icons/moon-full.png';
+  // first-time hint (2026-10-25): a pulsing scan ring until the moon is tapped once, and one automatic scan
+  function lsFlag(k) { try { return localStorage.getItem(k) === '1'; } catch (e) { return true; } }
+  function lsFlagSet(k) { try { localStorage.setItem(k, '1'); } catch (e) {} }
+  function moonHint() {
+    var ic = $('condIcon'), isMoon = ic.getAttribute('src') === WX_ICON.moon && !!MOON;
+    ic.classList.toggle('moonhint', isMoon && !lsFlag('nmsw-moon-tapped'));
+    if (isMoon && !lsFlag('nmsw-moon-auto')) { lsFlagSet('nmsw-moon-auto'); setTimeout(moonTap, 1500); }
+  }
   function moonTap() {
     var ic = $('condIcon'), lab = $('condLabel');
     if (!MOON || ic.getAttribute('src') !== WX_ICON.moon || lab.dataset.moon) return;
@@ -252,6 +261,7 @@
     drawMoon();
     $('condIcon').src = WX_ICON[kind]; $('condIcon').alt = '';
     $('condIcon').classList.toggle('moontap', kind === 'moon');
+    moonHint();
     var cl = $('condLabel'); delete cl.dataset.moon; cl.textContent = WMO[w.code] || '—';
     var d0 = w.days[0] || { hi: w.temp, lo: w.temp };
     $('hiLo').textContent = 'H ' + deg(d0.hi) + ' · L ' + deg(d0.lo) + ' · FEELS ' + deg(w.feels);
@@ -757,7 +767,7 @@
   };
   $('testAlert').onclick = function () { if (perm() !== 'granted') { toast('Turn on alerts first'); return; } notify('◈ ATLAS test alert', 'Notifications are working. See you out there, Traveller.', 'atlas-test'); };
   document.querySelectorAll('.tabs button').forEach(function (bt) { bt.onclick = function () { S.metric = bt.getAttribute('data-m'); renderHourly(); }; });
-  $('condIcon').addEventListener('click', moonTap);
+  $('condIcon').addEventListener('click', function () { lsFlagSet('nmsw-moon-tapped'); $('condIcon').classList.remove('moonhint'); moonTap(); });
   $('cards').addEventListener('click', function (e) { var c = e.target.closest('.wcard'); if (c) selectWorld(+c.getAttribute('data-i')); });
 
   // install prompt
