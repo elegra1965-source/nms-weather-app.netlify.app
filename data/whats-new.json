@@ -1,5 +1,23 @@
 [
  {
+  "id": "2026-10-26-map-almanac",
+  "date": "2026-10-26",
+  "apps": [
+   "map"
+  ],
+  "url": "/",
+  "text": {
+   "en": "Real game data on the map: real space station pictures, the game's own economy and trade, and links to NMS Almanac pages.",
+   "es": "Datos reales del juego en el mapa: imágenes reales de las estaciones espaciales, la economía y el comercio del propio juego, y enlaces a las páginas de NMS Almanac.",
+   "de": "Echte Spieldaten auf der Karte: echte Bilder der Raumstationen, die Wirtschaft und der Handel aus dem Spiel und Links zu den Seiten von NMS Almanac.",
+   "nl": "Echte gamegegevens op de kaart: echte afbeeldingen van ruimtestations, de economie en handel uit het spel zelf, en links naar pagina's van NMS Almanac.",
+   "pl": "Prawdziwe dane z gry na mapie: prawdziwe obrazy stacji kosmicznych, ekonomia i handel z samej gry oraz linki do stron NMS Almanac.",
+   "fr": "Les vraies données du jeu sur la carte : vraies images des stations spatiales, l'économie et le commerce du jeu, et des liens vers les pages de NMS Almanac.",
+   "pt-BR": "Dados reais do jogo no mapa: imagens reais das estações espaciais, a economia e o comércio do próprio jogo e links para as páginas do NMS Almanac.",
+   "it": "Dati reali del gioco sulla mappa: immagini reali delle stazioni spaziali, l'economia e il commercio del gioco e link alle pagine di NMS Almanac."
+  }
+ },
+ {
   "id": "2026-10-25-moon",
   "date": "2026-10-25",
   "apps": [
