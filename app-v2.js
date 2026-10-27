@@ -499,7 +499,7 @@
       var ics = w.res.filter(function (r) { return RES[r]; }).slice(0, 3).map(function (r) { return '<img src="' + RES[r] + '" alt="">'; }).join('');
       return '<button type="button" class="wcard" role="option" aria-selected="' + (i === S.world) + '" data-i="' + i + '">' +
         '<div class="wimg" style="background-image:url(\'' + CARD(IMGKEY[w.biome]) + '\')"><span class="n">WORLD ' + (i + 1) + '/' + S.worlds.length + '</span>' + (w.extreme ? '<span class="x">⚠ EXTREME</span>' : '') +
-        '<span class="sys"><span class="sdot" style="background:' + (STAR[w.star] || '#f0c040') + ';box-shadow:0 0 8px ' + (STAR[w.star] || '#f0c040') + '"></span>' + esc(w.sys) + '</span>' + (w.discS ? '<img class="almd" src="' + esc(w.discS) + '" alt="" loading="lazy" onerror="this.remove()">' : '') + '</div>' +
+        '<span class="sys"><span class="sdot" style="background:' + (STAR[w.star] || '#f0c040') + ';box-shadow:0 0 8px ' + (STAR[w.star] || '#f0c040') + '"></span>' + esc(w.sys) + '</span>' + (w.discS ? '<img class="almd" src="' + esc(w.discS) + '" alt="" loading="lazy" onerror="this.remove()">' : planetSVG(w, 'almd')) + '</div>' +
         '<div class="wbody"><span class="nm">' + esc(w.name) + '</span><span class="bm">' + esc(biomeLine(w)) + '</span><span class="wt">' + esc(w.weather) + '</span><span class="ft"><span class="by">by ' + esc(w.by) + '</span><span class="ics">' + ics + '</span></span></div></button>';
     }).join('');
   }
@@ -521,7 +521,7 @@
       '<div class="st"><span class="s1">◈ SCANNING SURFACE…</span><span class="s2">✓ SCAN COMPLETE</span></div>' +
       '<div class="addr"><div style="display:flex;flex-wrap:wrap;gap:8px"><span style="padding:3px 10px;border-radius:6px;background:rgba(0,0,0,.7);border:1px solid rgba(240,165,0,.5);font-family:var(--disp);font-size:11px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase">' + esc(biomeLine(w)) + '</span>' + (w.extreme ? '<span class="mono" style="padding:3px 10px;border-radius:6px;background:rgba(0,0,0,.7);border:1px solid rgba(255,140,0,.6);font-size:12px;letter-spacing:1.5px;color:var(--orange)">⚠ EXTREME WEATHER</span>' : '') + '</div>' +
       '<div class="addrbox"><div class="mono" style="display:flex;justify-content:space-between;gap:16px;font-size:10.5px;letter-spacing:2px;color:var(--text-dim)"><span>PORTAL ADDRESS · ' + esc(w.galaxy.toUpperCase()) + '</span><span>GLYPHS + HEX</span></div><div class="glyphs">' + glyphs + '</div><div class="hex">' + w.glyph + ' <button type="button" class="copy" id="copyAddr">COPY</button></div></div></div></div>' +
-      '<div class="scan-info"><div class="sv-name">' + (w.disc ? '<img class="almdisc" src="' + esc(w.disc) + '" alt="" onerror="this.remove()">' : '') + '<div style="min-width:0"><div class="mono" style="font-size:12px;letter-spacing:3px;color:var(--text-dim)">FULL SCAN · WORLD ' + (i + 1) + '/' + S.worlds.length + '</div><div style="font-family:var(--disp);font-weight:800;font-size:26px;letter-spacing:1px;color:var(--white);line-height:1.2">' + esc(w.name) + '</div><div style="font-size:15px;color:rgba(207,224,240,.7)">in the <span style="color:var(--white)">' + esc(w.sys) + '</span> system · <span style="color:' + (STAR[w.star] || '#f0c040') + '">' + esc(w.star) + ' star</span> · ' + esc(w.galaxy) + '</div>' +
+      '<div class="scan-info"><div class="sv-name">' + (w.disc ? '<img class="almdisc" src="' + esc(w.disc) + '" alt="" onerror="this.remove()">' : planetSVG(w, 'almdisc')) + '<div style="min-width:0"><div class="mono" style="font-size:12px;letter-spacing:3px;color:var(--text-dim)">FULL SCAN · WORLD ' + (i + 1) + '/' + S.worlds.length + '</div><div style="font-family:var(--disp);font-weight:800;font-size:26px;letter-spacing:1px;color:var(--white);line-height:1.2">' + esc(w.name) + '</div><div style="font-size:15px;color:rgba(207,224,240,.7)">in the <span style="color:var(--white)">' + esc(w.sys) + '</span> system · <span style="color:' + (STAR[w.star] || '#f0c040') + '">' + esc(w.star) + ' star</span> · ' + esc(w.galaxy) + '</div>' +
       '<div class="sumln">' + (w.extreme ? '<span style="color:var(--orange)">⚠ ' + esc(w.weather) + '</span>' : esc(w.weather)) + (w.sent ? ' · <span>Sentinels:</span> <b>' + esc(w.sent) + '</b>' : '') + '</div></div></div>' +
       '<div><button type="button" class="fdbtn" id="fdBtn" aria-expanded="' + FOLD + '" aria-controls="fdBody"><span>◈ FULL SCAN DATA</span><span class="ar" aria-hidden="true">▸</span></button>' +
       '<div class="fdbody" id="fdBody"' + (FOLD ? '' : ' hidden') + '><div class="rows">' +
@@ -548,6 +548,20 @@
      there; CORS open). If the Almanac doesn't know a planet or can't be reached, the
      Haven data stays. Browser cache 7 days. Credit: Data + picture: NMS Almanac. */
   var FOLD = false;
+  /* planets the Almanac has no picture for: a drawn planet in the biome's colours (same one every time for that address) */
+  var P_PAL = { Lush: ['#7ED957', '#3E9B4F', '#1E5631', '#00E5CC'], Frozen: ['#E8F8FF', '#A8D8EA', '#5B8FA8', '#00FFEE'], Toxic: ['#D4E157', '#9CCC65', '#4E6B1F', '#CDDC39'],
+    Scorched: ['#FFB347', '#E2711D', '#7A2E0E', '#FF8C00'], Radioactive: ['#C6FF00', '#76FF03', '#33691E', '#AEEA00'], Volcanic: ['#FF7043', '#D84315', '#3E2723', '#FF3322'],
+    Dead: ['#D7CCC8', '#A1887F', '#5D4037', '#FF8C00'], Marsh: ['#69F0AE', '#26A69A', '#00695C', '#00FFEE'] };
+  function planetSVG(w, cls) {
+    var c = P_PAL[w.biome] || P_PAL.Dead, seed = parseInt(String(w.glyph).slice(-8), 16) || 7, id = 'pg' + String(w.glyph) + cls;
+    var rnd = function () { seed = (seed * 1103515245 + 12345) % 2147483648; return seed / 2147483648; };
+    var spots = '', n = 3 + Math.floor(rnd() * 3);
+    for (var i = 0; i < n; i++) { var a = rnd() * 6.283, r = rnd() * 16; spots += '<ellipse cx="' + (40 + Math.cos(a) * r).toFixed(1) + '" cy="' + (40 + Math.sin(a) * r).toFixed(1) + '" rx="' + (3 + rnd() * 7).toFixed(1) + '" ry="' + (2 + rnd() * 4).toFixed(1) + '" fill="' + c[2] + '" opacity=".35" transform="rotate(' + Math.floor(rnd() * 360) + ' 40 40)"/>'; }
+    var ring = rnd() < 0.3 ? '<ellipse cx="40" cy="40" rx="36" ry="9" fill="none" stroke="' + c[1] + '" stroke-width="2.5" opacity=".65" transform="rotate(-18 40 40)"/>' : '';
+    return '<svg class="' + cls + ' pdraw" viewBox="6 6 68 68" aria-hidden="true"><defs><radialGradient id="' + id + '" cx="35%" cy="32%" r="75%"><stop offset="0%" stop-color="' + c[0] + '"/><stop offset="55%" stop-color="' + c[1] + '"/><stop offset="100%" stop-color="' + c[2] + '"/></radialGradient>' +
+      '<clipPath id="' + id + 'c"><circle cx="40" cy="40" r="26"/></clipPath></defs><circle cx="40" cy="40" r="28.5" fill="none" stroke="' + c[3] + '" stroke-width="1.2" opacity=".4"/><circle cx="40" cy="40" r="26" fill="url(#' + id + ')"/>' +
+      '<g clip-path="url(#' + id + 'c)">' + spots + '<circle cx="52" cy="52" r="30" fill="#000" opacity=".25"/></g>' + ring + '</svg>';
+  }
   var ALM_URL = 'https://map.nomansskyhub.app/.netlify/functions/almanac', ALM_STORE = 'nmsw-alm1';
   function almGet(k) { try { var c = JSON.parse(localStorage.getItem(ALM_STORE) || '{}')[k]; if (c && c.t > Date.now() - 7 * 864e5) return c.b; } catch (e) {} return undefined; }
   function almPut(k, b) {
