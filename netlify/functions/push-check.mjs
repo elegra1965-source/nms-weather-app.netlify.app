@@ -87,6 +87,8 @@ export default async () => {
       try {
         await webpush.sendNotification(rec.sub, JSON.stringify({ title: a.title, body: a.body, tag: a.tag, url: a.url || '/' }), { TTL: 3600, urgency: a.tag === 'atlas-severe' ? 'high' : 'normal' });
         rec.sent[a.key] = Date.now(); changed = true; sentCount++;
+        // one line per alert sent: alert key, app, language, short non-identifying id (never the endpoint or location)
+        console.log(`push-check: sent ${a.key} -> ${app}/${(rec.prefs && rec.prefs.lang) || rec.lang || 'en'}/${String(k).slice(0, 6)}`);
         if (a.pool) { rec.lines = rec.lines || {}; rec.lines[a.pool] = a.idx; } // so the next one says something different
       } catch (e) {
         if (e.statusCode === 404 || e.statusCode === 410) { gone = true; break; } // phone unsubscribed or app removed

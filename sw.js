@@ -1,9 +1,9 @@
 // Atlas Weather Station — Service Worker (v4.0 redesign)
-const CACHE_NAME = 'nms-weather-v79';
+const CACHE_NAME = 'nms-weather-v80';
 
 // App shell — cached on install (every path here must exist, or install fails)
 const SHELL_ASSETS = [
-  '/', '/index.html', '/app-v2.js?v=25', '/manifest.json', '/data/haven-worlds.json',
+  '/', '/index.html', '/app-v2.js?v=26', '/manifest.json', '/data/haven-worlds.json',
   '/icon-mark.png', '/icon-192.png', '/badge-96.png', '/icon-512.png', '/mobile.css?v=4', '/mobile.js?v=1', '/share.js?v=2', '/icon-maskable-192.png', '/icon-maskable-512.png', '/favicon.png', '/favicon-64.png', '/apple-touch-icon.png',
   '/fonts/NMSAlphabet.ttf',
   '/icons/4.png', '/icons/12.png', '/icons/14.png', '/icons/26.png', '/icons/30.png', '/icons/31.png', '/icons/32.png', '/icons/moon-full.png',

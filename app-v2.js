@@ -436,6 +436,8 @@
     $('shareX').href = 'https://x.com/intent/tweet?text=' + encodeURIComponent(txt) + '&url=' + encodeURIComponent(url);
     $('shareReddit').href = 'https://reddit.com/submit?url=' + encodeURIComponent(url) + '&title=' + encodeURIComponent(txt);
     $('copyLink').onclick = function () { copy(url, '✓ Forecast link copied'); };
+    // Discord has no share link: copy the message + link, then open Discord so they pick a server or DM
+    $('shareDiscord').onclick = function () { copy(txt + ' ' + url, '✓ Copied. Paste it in any Discord server or DM'); };
   }
   function copy(text, msg) {
     var done = function () { toast(msg); };
@@ -489,6 +491,7 @@
         sys: s[0], galaxy: s[1], glyph: s[2], race: s[3], star: s[4], econ: s[5], conflict: s[6], gIndex: (HAVEN.meta.galaxies || {})[s[1]] || 0 };
     }).filter(Boolean);
     renderCards(); selectWorld(Math.min(S.world, S.worlds.length - 1));
+    almFill();
   }
   function biomeLine(w) { return w.raw && w.raw !== w.biome && w.raw !== 'Swamp' ? w.biome + ' · ' + w.raw : w.biome; }
   function renderCards() {
@@ -496,33 +499,100 @@
       var ics = w.res.filter(function (r) { return RES[r]; }).slice(0, 3).map(function (r) { return '<img src="' + RES[r] + '" alt="">'; }).join('');
       return '<button type="button" class="wcard" role="option" aria-selected="' + (i === S.world) + '" data-i="' + i + '">' +
         '<div class="wimg" style="background-image:url(\'' + CARD(IMGKEY[w.biome]) + '\')"><span class="n">WORLD ' + (i + 1) + '/' + S.worlds.length + '</span>' + (w.extreme ? '<span class="x">⚠ EXTREME</span>' : '') +
-        '<span class="sys"><span class="sdot" style="background:' + (STAR[w.star] || '#f0c040') + ';box-shadow:0 0 8px ' + (STAR[w.star] || '#f0c040') + '"></span>' + esc(w.sys) + '</span></div>' +
+        '<span class="sys"><span class="sdot" style="background:' + (STAR[w.star] || '#f0c040') + ';box-shadow:0 0 8px ' + (STAR[w.star] || '#f0c040') + '"></span>' + esc(w.sys) + '</span>' + (w.discS ? '<img class="almd" src="' + esc(w.discS) + '" alt="" loading="lazy" onerror="this.remove()">' : '') + '</div>' +
         '<div class="wbody"><span class="nm">' + esc(w.name) + '</span><span class="bm">' + esc(biomeLine(w)) + '</span><span class="wt">' + esc(w.weather) + '</span><span class="ft"><span class="by">by ' + esc(w.by) + '</span><span class="ics">' + ics + '</span></span></div></button>';
     }).join('');
   }
-  function selectWorld(i) {
+  var scanAt = 0, quietT = null;
+  function selectWorld(i, quiet) {
+    clearTimeout(quietT);
+    // Almanac data arriving mid-scan: wait for the scan animation to finish, then redraw without replaying it
+    if (quiet && Date.now() - scanAt < 2700) { quietT = setTimeout(function () { if (S.world === i) selectWorld(i, true); }, 2700 - (Date.now() - scanAt)); return; }
     S.world = i; var w = S.worlds[i]; if (!w) return;
     document.querySelectorAll('.wcard').forEach(function (c, k) { c.setAttribute('aria-selected', k === i ? 'true' : 'false'); });
     var race = RACE[w.race], hd = HD(IMGKEY[w.biome]);
     var glyphs = w.glyph.split('').map(function (ch) { return '<span><img src="/glyphs/g-' + ch + '.webp" alt="' + ch + '" title="' + ch + '"></span>'; }).join('');
-    var res = w.res.map(function (r) { return '<span>' + (RES[r] ? '<img src="' + RES[r] + '" alt="">' : '<i aria-hidden="true">◈</i>') + esc(r) + '</span>'; }).join('');
+    var T = window.NMS_T || function (s, v) { return String(s).replace(/\{(\w+)\}/g, function (m, k) { return v && v[k] != null ? v[k] : m; }); };
+    var row = function (k, v) { return '<div><i>' + k + '</i><span>' + v + '</span></div>'; };
+    var res = w.res.slice(0, 6).map(function (r) { return '<span>' + (RES[r] ? '<img src="' + RES[r] + '" alt="">' : '') + esc(r) + '</span>'; }).join('') + (w.res.length > 6 ? '<span class="more">' + T('+{n} more', { n: w.res.length - 6 }) + '</span>' : '');
     var mapUrl = 'https://map.nomansskyhub.app/?arrival=1&addr=' + w.glyph + '&galaxy=' + w.gIndex;
     $('scan').innerHTML =
       '<div class="scan-img" id="scanImg"><div class="blur" style="background-image:url(\'' + hd + '\')"></div><div class="sharp" role="img" aria-label="' + esc(w.biome) + ' biome" style="background-image:url(\'' + hd + '\')"></div><div class="shade"></div><div class="bar" aria-hidden="true"></div>' +
       '<div class="st"><span class="s1">◈ SCANNING SURFACE…</span><span class="s2">✓ SCAN COMPLETE</span></div>' +
       '<div class="addr"><div style="display:flex;flex-wrap:wrap;gap:8px"><span style="padding:3px 10px;border-radius:6px;background:rgba(0,0,0,.7);border:1px solid rgba(240,165,0,.5);font-family:var(--disp);font-size:11px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase">' + esc(biomeLine(w)) + '</span>' + (w.extreme ? '<span class="mono" style="padding:3px 10px;border-radius:6px;background:rgba(0,0,0,.7);border:1px solid rgba(255,140,0,.6);font-size:12px;letter-spacing:1.5px;color:var(--orange)">⚠ EXTREME WEATHER</span>' : '') + '</div>' +
       '<div class="addrbox"><div class="mono" style="display:flex;justify-content:space-between;gap:16px;font-size:10.5px;letter-spacing:2px;color:var(--text-dim)"><span>PORTAL ADDRESS · ' + esc(w.galaxy.toUpperCase()) + '</span><span>GLYPHS + HEX</span></div><div class="glyphs">' + glyphs + '</div><div class="hex">' + w.glyph + ' <button type="button" class="copy" id="copyAddr">COPY</button></div></div></div></div>' +
-      '<div class="scan-info"><div><div class="mono" style="font-size:12px;letter-spacing:3px;color:var(--text-dim)">FULL SCAN · WORLD ' + (i + 1) + '/' + S.worlds.length + '</div><div style="font-family:var(--disp);font-weight:800;font-size:26px;letter-spacing:1px;color:var(--white);line-height:1.2">' + esc(w.name) + '</div><div style="font-size:15px;color:rgba(207,224,240,.7)">in the <span style="color:var(--white)">' + esc(w.sys) + '</span> system · <span style="color:' + (STAR[w.star] || '#f0c040') + '">' + esc(w.star) + ' star</span> · ' + esc(w.galaxy) + '</div></div>' +
-      '<div class="cells"><div class="cell"><div class="k">WEATHER</div><div class="v">' + esc(w.weather) + '</div></div><div class="cell"><div class="k">FLORA · FAUNA</div><div class="v">' + esc(w.flora) + ' · ' + esc(w.fauna) + '</div></div>' +
-      '<div class="cell withimg">' + (race ? '<img src="' + race[0] + '" alt="" style="filter:drop-shadow(0 0 8px ' + race[1] + ')">' : '') + '<div><div class="k">DOMINANT RACE</div><div class="v">' + esc(w.race) + '</div></div></div>' +
-      '<div class="cell"><div class="k">ECONOMY · CONFLICT</div><div class="v">' + esc(w.econ) + ' · <span style="color:' + (CONF[w.conflict] || 'var(--text)') + '">' + esc(w.conflict) + '</span></div></div></div>' +
-      (res ? '<div><div style="font-family:var(--disp);font-size:10px;letter-spacing:2px;color:var(--text-dim);margin-bottom:6px">RESOURCES</div><div class="res">' + res + '</div></div>' : '') +
-      '<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:auto"><a class="btn btn-primary" href="' + mapUrl + '" target="_blank" rel="noopener">◈ Show on Galactic Map →</a><button type="button" class="btn btn-ghost" id="nextWorld">Next world ▸</button></div>' +
-      '<div class="mono" style="font-size:12px;color:var(--text-dim);line-height:1.5">Charted by <span style="color:var(--white)">' + esc(w.by) + '</span> · data via <a href="https://havenmap.online" target="_blank" rel="noopener" style="text-decoration:none">Voyager\'s Haven</a></div></div>';
-    var si = $('scanImg'); void si.offsetWidth; si.classList.add('run');
+      '<div class="scan-info"><div class="sv-name">' + (w.disc ? '<img class="almdisc" src="' + esc(w.disc) + '" alt="" onerror="this.remove()">' : '') + '<div style="min-width:0"><div class="mono" style="font-size:12px;letter-spacing:3px;color:var(--text-dim)">FULL SCAN · WORLD ' + (i + 1) + '/' + S.worlds.length + '</div><div style="font-family:var(--disp);font-weight:800;font-size:26px;letter-spacing:1px;color:var(--white);line-height:1.2">' + esc(w.name) + '</div><div style="font-size:15px;color:rgba(207,224,240,.7)">in the <span style="color:var(--white)">' + esc(w.sys) + '</span> system · <span style="color:' + (STAR[w.star] || '#f0c040') + '">' + esc(w.star) + ' star</span> · ' + esc(w.galaxy) + '</div>' +
+      '<div class="sumln">' + (w.extreme ? '<span style="color:var(--orange)">⚠ ' + esc(w.weather) + '</span>' : esc(w.weather)) + (w.sent ? ' · <span>Sentinels:</span> <b>' + esc(w.sent) + '</b>' : '') + '</div></div></div>' +
+      '<div><button type="button" class="fdbtn" id="fdBtn" aria-expanded="' + FOLD + '" aria-controls="fdBody"><span>◈ FULL SCAN DATA</span><span class="ar" aria-hidden="true">▸</span></button>' +
+      '<div class="fdbody" id="fdBody"' + (FOLD ? '' : ' hidden') + '><div class="rows">' +
+      row('WEATHER', w.extreme ? '<span style="color:var(--orange)">⚠ ' + esc(w.weather) + '</span>' : esc(w.weather)) + row('SENTINELS', esc(w.sent || '—')) +
+      row('FLORA', esc(w.flora)) + row('FAUNA', esc(w.fauna)) +
+      row('RACE', (race ? '<img src="' + race[0] + '" alt="" style="filter:drop-shadow(0 0 6px ' + race[1] + ')">' : '') + esc(w.race)) +
+      row('ECONOMY', esc(w.econ) + (w.wealth && w.wealth !== 'None' ? ' · ' + esc(w.wealth) : '')) +
+      row('CONFLICT', '<span style="color:' + (CONF[w.conflict] || 'var(--white)') + '">' + esc(w.conflict) + '</span>') +
+      row('RESOURCES', w.res.length ? T('{n} found', { n: w.res.length }) : '—') + '</div>' +
+      (res ? '<div class="res">' + res + '</div>' : '') + '</div></div>' +
+      '<div class="sv-btns"><a class="btn btn-primary" href="' + mapUrl + '" target="_blank" rel="noopener">◈ Galactic Map →</a><button type="button" class="btn btn-ghost" id="nextWorld">Next ▸</button></div>' +
+      '<div class="mono" style="font-size:12px;color:var(--text-dim);line-height:1.5">' + (w.almUrl ? '<span>Data + picture:</span> <a href="' + esc(w.almUrl) + '" target="_blank" rel="noopener" style="text-decoration:none">NMS Almanac</a> · ' : '') + 'Charted by <span style="color:var(--white)">' + esc(w.by) + '</span> · data via <a href="https://havenmap.online" target="_blank" rel="noopener" style="text-decoration:none">Voyager\'s Haven</a></div></div>';
+    var si = $('scanImg'); if (!quiet) { void si.offsetWidth; si.classList.add('run'); scanAt = Date.now(); }
     $('copyAddr').onclick = function () { copy(w.glyph, '✓ Portal address copied'); };
     $('nextWorld').onclick = function () { selectWorld((S.world + 1) % S.worlds.length); };
+    $('fdBtn').onclick = function () { FOLD = !FOLD; this.setAttribute('aria-expanded', FOLD); $('fdBody').hidden = !FOLD; };
   }
+
+  /* ---------- 2026-10-27: NMS ALMANAC + VOYAGER'S HAVEN ----------
+     Haven still picks the 8 worlds (and the traveller's name for each); the Almanac then
+     supplies what the game says about each planet (weather, sentinels, flora, fauna,
+     resources, race, economy, conflict), its real portal address and its planet picture.
+     Read through the Galactic Map's almanac function (key server-side, answers cached
+     there; CORS open). If the Almanac doesn't know a planet or can't be reached, the
+     Haven data stays. Browser cache 7 days. Credit: Data + picture: NMS Almanac. */
+  var FOLD = false;
+  var ALM_URL = 'https://map.nomansskyhub.app/.netlify/functions/almanac', ALM_STORE = 'nmsw-alm1';
+  function almGet(k) { try { var c = JSON.parse(localStorage.getItem(ALM_STORE) || '{}')[k]; if (c && c.t > Date.now() - 7 * 864e5) return c.b; } catch (e) {} return undefined; }
+  function almPut(k, b) {
+    try {
+      var all = JSON.parse(localStorage.getItem(ALM_STORE) || '{}'); all[k] = { t: Date.now(), b: b };
+      var ks = Object.keys(all).sort(function (x, y) { return all[x].t - all[y].t; }); while (ks.length > 40) delete all[ks.shift()];
+      localStorage.setItem(ALM_STORE, JSON.stringify(all));
+    } catch (e) {}
+  }
+  function almFetch(w) {
+    var k = w.gIndex + ':' + w.glyph.slice(1), c = almGet(k);
+    if (c !== undefined) return Promise.resolve(c);
+    var ctl = window.AbortController ? new AbortController() : null, tm = setTimeout(function () { if (ctl) ctl.abort(); }, 6000);
+    return fetch(ALM_URL + '?addr=' + encodeURIComponent(w.glyph) + '&galaxy=' + w.gIndex, ctl ? { signal: ctl.signal } : {})
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) {
+        if (!d || !d.ok) return null; // not cached: try again next visit
+        var want = String(w.name || '').toLowerCase(), b = null;
+        (d.found && d.bodies || []).forEach(function (x) { if (!b && (String(x.name || '').toLowerCase() === want || String(x.gameName || '').toLowerCase() === want)) b = x; });
+        var sy = d.system || {}, out = b ? { portal: b.portal, desc: b.desc, weather: b.weather, extreme: !!b.extreme, sent: b.sentinels, flora: b.floraW, fauna: b.faunaW,
+          res: b.resources || [], disc: b.disc, discS: b.discSmall || b.disc, race: sy.race, econ: sy.economyType || sy.economy, wealth: sy.wealth, conflict: sy.conflict } : false;
+        almPut(k, out); return out;
+      }).catch(function () { return null; }).then(function (x) { clearTimeout(tm); return x; });
+  }
+  var almRun = 0;
+  function almFill() {
+    var run = ++almRun, list = S.worlds.slice(), i = 0;
+    (function next() {
+      if (run !== almRun || i >= list.length) return;
+      var w = list[i++];
+      almFetch(w).then(function (a) {
+        if (run !== almRun) return;
+        if (a && a.portal) {
+          var slug = String(w.galaxy).toLowerCase().replace(/[\s']+/g, '-');
+          w.glyph = a.portal; w.raw = String(a.desc || '').replace(/ (Planet|Moon)$/, ''); w.weather = a.weather || w.weather; w.extreme = a.extreme; w.sent = a.sent;
+          w.flora = a.flora || w.flora; w.fauna = a.fauna || w.fauna; if (a.res.length) w.res = a.res;
+          w.race = a.race || w.race; w.econ = a.econ || w.econ; w.wealth = a.wealth; w.conflict = a.conflict || w.conflict;
+          w.disc = a.disc; w.discS = a.discS; w.almUrl = 'https://nmsalmanac.com/planet/' + encodeURIComponent(slug) + '/' + a.portal;
+          var keep = S.world; renderCards(); if (S.worlds[keep] === w) selectWorld(keep, true); else markSel();
+        }
+        next();
+      });
+    })();
+  }
+  function markSel() { document.querySelectorAll('.wcard').forEach(function (c, k) { c.setAttribute('aria-selected', k === S.world ? 'true' : 'false'); }); }
 
   // ---------- rain radar (RainViewer frames on Esri's dark grey base map) ----------
   var RD = { host: '', frames: [], i: 0, timer: null, key: '', playing: true, z: 7 };
