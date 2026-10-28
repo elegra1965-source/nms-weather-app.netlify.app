@@ -8,7 +8,21 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 
 ![NMS Weather: live London weather as a planet scan](screenshots/01-hero.jpg)
 
+**Contents** — long sections are folded; tap to open.
+
+- [What it does](#what-it-does)
+- [New here? Take the tour](#new-here-take-the-tour)
+- [How it's built](#how-its-built)
+- [Data and credits](#data-and-credits)
+- [Using this code?](#using-this-code)
+- [Licence](#licence)
+
+<!-- folded -->
+
 ## What it does
+
+<details>
+<summary>▸ Tap to open</summary>
 
 - **Live weather as a biome.** Storms read as Extreme, snow or freezing as Frozen, rain or fog as Marsh, heat as Scorched, poor air as Toxic, high UV as Radioactive, clear nights as Barren, and everything else as Lush. The hero sky, rain/snow/lightning effects and planet image all change to match.
 - **Tonight's real moon.** On clear nights the icon next to the weather is the real Moon in tonight's actual phase (worked out from the date, accurate to well under an hour, the same everywhere on Earth), turned upside down for anyone south of the equator, just as they see it. Tap it to scan: "◈ Scanning…", then the phase name and how much is lit, e.g. "◈ Full Moon · 99%", in your language. So new visitors find it, the first time the moon shows it scans itself once, and a faint cyan scan ring pulses round it until it has been tapped once (a still ring with reduced motion). The night icons in the 24-hour forecast use it too. Moon picture made from the NASA lunar map shipped with [three.js](https://github.com/mrdoob/three.js) (`icons/moon-full.png`).
@@ -42,6 +56,8 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 
 <img src="screenshots/03-languages.jpg" alt="NMS Weather on a phone: the language picker (left) and the page in Polski (right)" width="560">
 
+</details>
+
 ## New here? Take the tour
 
 First-time visitors get a small **New here? ▶ Take the tour / Dive in** box (shown once, never again). The tour dims the page and spotlights city search, your location, the planet scan, alerts, the jump bar and Share, one step at a time with Back / Next / Skip. Replay it any time from the **▷ TOUR** button. The phone's Back button closes it, and it's translated into every language the site offers. Shared `nms-tour.js`, the same file on every nomansskyhub.app site.
@@ -49,6 +65,9 @@ First-time visitors get a small **New here? ▶ Take the tour / Dive in** box (s
 <img src="screenshots/04-tour.jpg" alt="Left: the New here? Take the tour prompt. Right: tour step 3 of 6, Your planet scan, spotlighting the scan card" width="560">
 
 ## How it's built
+
+<details>
+<summary>▸ Tap to open</summary>
 
 A plain HTML/CSS/JavaScript site with no build step and no framework, plus two small Netlify functions for alerts. Deployed on Netlify straight from this repo.
 
@@ -64,6 +83,8 @@ A plain HTML/CSS/JavaScript site with no build step and no framework, plus two s
 | `lang.js`, `lang/`, `fonts/` | Language picker and translations, shared by every Hub site |
 | `data/haven-worlds.json` | Snapshot of real planets from Voyager's Haven used by the daily survey |
 | `icons/`, `hd/`, `glyphs/`, `fonts/` | Weather icons, planet images, portal glyphs, NMS alphabet font |
+
+</details>
 
 ## Data and credits
 
