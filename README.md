@@ -50,6 +50,10 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 
   <img src="screenshots/05-update-bar.jpg" alt="The update bar at the bottom of the page on a phone: New version ready, tap to update, with a close button" width="390">
 
+- **Patch notes after a big update.** After you tap the update bar (or the first time you open a new version) a short pop-up says what changed, with NEW / IMPROVED / FIXED tags: a scan line sweeps down the screen and the panel appears behind it. It shows once per version, in your language, and only the newest notes if you skipped a version.
+
+  <img src="screenshots/07-patch-notes.jpg" alt="The patch notes pop-up on a phone: System update received, Patch notes with the version, and the list of changes with NEW and IMPROVED tags" width="390">
+
 - **Phone layout:** on screens 700px wide or less, a sticky jump bar (NOW · WEEK · HAZARDS · RADAR · WORLDS), the nine readings as one swipeable row with dots, and folds for the exosuit report, days 4–7, hazard readings (opened automatically when the shield drops below 100%), the rain radar and each world's full scan (opens when you tap a world). Plus a back-to-top button. It lives in `mobile.css` and `mobile.js`; desktop is unchanged. The app icon has maskable versions (`icon-maskable-*.png`) so Android doesn't show it on a white plate.
 
 ![Daily planetary survey: a real player-charted world with portal glyphs and hex address](screenshots/02-planetary-survey.jpg)
