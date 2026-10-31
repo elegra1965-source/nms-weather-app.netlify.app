@@ -119,6 +119,9 @@ img{max-width:100%}
 @media(max-width:374px){.brand{gap:10px}.mark,.mark img{width:40px;height:40px}.brand-name{font-size:14px;letter-spacing:1px}.brand-clock{font-size:11px;letter-spacing:1px}}
 /* 2026-10-24: on phones the search box gets its own full-width row (Scan + locate underneath), so its hint text fits */
 @media(max-width:600px){.top .search{flex:1 1 100%;flex-wrap:wrap}.top .search input{flex:1 1 100%}.top .search .btn-primary{flex:1 1 auto}}
+/* footer buttons: even rows on phones (Install|Copy link, Reviews & feedback, X|Reddit|Discord) */
+@media(max-width:899px){footer .fbtns{display:grid!important;grid-template-columns:repeat(6,1fr);gap:10px}footer .fbtns>*{grid-column:span 2;min-width:0;padding-left:8px;padding-right:8px}footer .fbtns>#installBtn2,footer .fbtns>#copyLink{grid-column:span 3}footer .fbtns>#installBtn2[hidden]{display:none}footer .fbtns>#installBtn2[hidden]+#copyLink,footer .fbtns>#fbOpenBtn{grid-column:span 6}}
+@media(max-width:400px){footer .fbtns{gap:8px}footer .fbtns>*{letter-spacing:1px;font-size:11px;padding-left:6px;padding-right:6px;gap:6px}}
 @media(max-width:400px){.brand>span{min-width:0}.brand-clock{white-space:normal}footer .fl .btn{min-width:0;max-width:100%;height:auto;min-height:44px;padding-top:8px;padding-bottom:8px;white-space:normal;text-align:center}}
 .search{display:flex;gap:8px;flex:999 1 240px;min-width:0}
 .search input{flex:1 1 auto;min-width:0;height:44px;padding:0 14px;border-radius:8px;border:1px solid var(--border);background:rgba(0,0,0,.35);color:var(--white);font-family:var(--body);font-size:16px}
@@ -658,7 +661,7 @@ body.no-fx .rd-sweep,body.no-fx .rd-pin::after{animation:none;display:none}
   <!-- footer -->
   <footer>
     <div class="fl">
-      <div style="display:flex;flex-wrap:wrap;gap:10px">
+      <div class="fbtns" style="display:flex;flex-wrap:wrap;gap:10px">
         <button type="button" class="btn btn-primary" id="installBtn2" hidden>⬇ Install app</button>
         <button type="button" class="btn btn-ghost" id="copyLink">◈ Copy forecast link</button>
         <button type="button" class="btn btn-ghost nms-fb-btn" id="fbOpenBtn" data-nms-feedback aria-haspopup="dialog"><img class="nms-fb-ico" src="/nms-feedback/fb-ico-review.webp" srcset="/nms-feedback/fb-ico-review@2x.webp 2x" alt="" width="20" height="20"><span data-fbt="REVIEWS &amp; FEEDBACK">REVIEWS &amp; FEEDBACK</span></button>
