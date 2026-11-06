@@ -5,7 +5,7 @@
   command = '[ -f sitemap.xml ] && sed -i -E "s#<lastmod>[^<]*</lastmod>#<lastmod>$(date -u +%F)</lastmod>#g" sitemap.xml || true'
   # A commit that only changes README.md or data/whats-new.json skips the deploy (saves build credits);
   # whats-new.json is read from GitHub by the alert checker, so a new major-update note needs no deploy
-  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- . ':(exclude)README.md' ':(exclude)data/whats-new.json'"
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- . ':(exclude)README.md' ':(exclude)screenshots/**' ':(exclude)data/whats-new.json'"
 
 [functions]
   directory = "netlify/functions"

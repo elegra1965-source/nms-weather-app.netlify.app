@@ -50,7 +50,7 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 
   <img src="screenshots/05-update-bar.jpg" alt="The update bar at the bottom of the page on a phone: New version ready, tap to update, with a close button" width="390">
 
-- **Patch notes after a big update.** After you tap the update bar (or the first time you open a new version) a short pop-up says what changed, with NEW / IMPROVED / FIXED tags: a scan line sweeps down the screen and the panel appears behind it. It shows once per version, in your language, and only the newest notes if you skipped a version.
+- **Patch notes after a big update.** After you tap the update bar (or the first time you open a new version) a short pop-up says what changed, with NEW / IMPROVED / FIXED tags: a scan line sweeps down the screen and the panel appears behind it. It shows once per version, in your language, and only the newest notes if you skipped a version. The "already seen" mark is a small shared cookie, `nms_pn`, kept for 7 days across all the Hub sites, holding only the release date (like the language cookie), so moving from one site to the next doesn't repeat the same pop-up.
 
   <img src="screenshots/07-patch-notes.jpg" alt="The patch notes pop-up on a phone: System update received, Patch notes with the version, and the list of changes with NEW and IMPROVED tags" width="390">
 
@@ -60,9 +60,11 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 
 <img src="screenshots/03-languages.jpg" alt="NMS Weather on a phone: the language picker (left) and the page in Polski (right)" width="560">
 
-- **★ Reviews & feedback.** The REVIEWS & FEEDBACK button in the footer, next to Copy forecast link, opens the same pop-up as the Hub: leave a review (stars, and an "OK to show" switch), report a bug (your device type and browser are added so it can be fixed faster) or ask for something new. This site is ticked for you. Everything goes to elegra1965 through the Hub, and nothing shows on the site without his OK. In all 8 languages; the question at the top now reads "What's it about, traveller?".
+- **★ Reviews & feedback.** The REVIEWS & FEEDBACK button in the footer, next to Copy forecast link, opens the same pop-up as the Hub: leave a review (stars, and an "OK to show" switch), report a bug (your device type and browser are added so it can be fixed faster), suggest an idea, or pick the new **Other** chip to ask a plain question. You can add an email address if you'd like a reply; it is used only as the email's reply-to and is never saved. This site is ticked for you. Everything goes to elegra1965 through the Hub, and nothing shows on the site without his OK. In all 8 languages; the question at the top now reads "What's it about, traveller?".
 
   <img src="screenshots/07-reviews-feedback.jpg" alt="The Reviews and feedback button in the footer and the pop-up it opens, on a phone" width="560">
+
+  <img src="screenshots/08-feedback-other-reply-email.jpg" alt="The feedback pop-up with the four chips (Review, Bug, Idea / request, Other), Weather ticked, and the optional reply email (example text)" width="460">
 
 </details>
 
@@ -91,7 +93,7 @@ A plain HTML/CSS/JavaScript site with no build step and no framework, plus two s
 | `netlify/functions/push-subscribe.mjs` | Saves or deletes an alert sign-up (Netlify Blobs) |
 | `netlify/functions/push-check.mjs` | Runs every 30 minutes, checks the forecast and sends alerts |
 | `netlify/functions/lib/` | Alert rules (`alerts.mjs`) and wording in 8 languages (`alert-text.mjs`, `wmo-i18n.mjs`) |
-| `privacy.html` | What is stored and how to remove it |
+| `privacy.html` | What is stored and how to remove it (says "no tracking cookies" and lists the few small cookies that stay on your device: language, Traveller ID name, patch-notes-seen date) |
 | `lang.js`, `lang/`, `fonts/` | Language picker and translations, shared by every Hub site |
 | `data/haven-worlds.json` | Snapshot of real planets from Voyager's Haven used by the daily survey |
 | `icons/`, `hd/`, `glyphs/`, `fonts/` | Weather icons, planet images, portal glyphs, NMS alphabet font |
