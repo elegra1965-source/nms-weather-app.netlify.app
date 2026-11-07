@@ -76,9 +76,9 @@
     'Lava Bloom': '/plant-lava-bloom.webp', 'Dead Flora': '/plant-dead-flora.webp', 'Fuscium': '/fuscium.png', 'Plutonium': '/plutonium.webp',
     'Cactus Flesh': '/plant-cactus-flesh.webp', 'Marrow Bulb': '/plant-marrow-bulb.webp', 'NipNip Buds': '/plant-nipnip.webp'
   };
-  ['Ammonia', 'Carbon', 'Chromatic Metal', 'Cobalt', 'Copper', 'Dioxite', 'Ferrite Dust', 'Fireberry', 'Grahberry', 'Indium', 'Jade Peas', 'Magnetised Ferrite', 'Nitrogen', 'Paraffinium', 'Phosphorus', 'Pyrite', 'Rusted Metal', 'Salt', 'Silver', 'Sodium', 'Uranium', 'Albumen Pearl', 'Gravitino Ball', 'Halal Core', 'Hypnotic Eye', 'Living Pearl', 'Sac Venom', 'Vortex Cube']
+  ['Ammonia', 'Carbon', 'Chromatic Metal', 'Cobalt', 'Copper', 'Dioxite', 'Ferrite Dust', 'Fireberry', 'Grahberry', 'Indium', 'Jade Peas', 'Magnetised Ferrite', 'Nitrogen', 'Paraffinium', 'Phosphorus', 'Pyrite', 'Rusted Metal', 'Salt', 'Silver', 'Sodium', 'Uranium', 'Albumen Pearl', 'Gravitino Ball', 'Halal Core', 'Hypnotic Eye', 'Living Pearl', 'Sac Venom', 'Vortex Cube', 'Cadmium', 'Emeril', 'Quartzite', 'Sulphurine']
     .forEach(function (n) { RES[n] = '/icons/wiki/res-' + n.replace(/ /g, '_') + '.webp'; });
-  RES['Activated Copper'] = RES.Copper; RES['Activated Indium'] = RES.Indium; RES['Basalt'] = RES.Pyrite;
+  RES['Activated Cadmium'] = RES.Cadmium; RES['Activated Emeril'] = RES.Emeril; RES['Activated Quartzite'] = RES.Quartzite; RES['Activated Copper'] = RES.Copper; RES['Activated Indium'] = RES.Indium; RES['Basalt'] = RES.Pyrite;
   var RACE = { 'Gek': ['/race-gek.png', 'rgba(110,220,120,.6)'], 'Korvax': ['/race-korvax.png', 'rgba(150,140,255,.6)'], "Vy'keen": ['/race-vykeen.png', 'rgba(230,140,110,.6)'] };
   var STAR = { Yellow: '#f0c040', Red: '#ff5a3c', Green: '#3cff8a', Blue: '#5ab4ff', Purple: '#b07cff' };
   var CONF = { Low: '#00ff88', Medium: '#f0a500', High: '#ff8c00', Pirate: '#ff3322' };
