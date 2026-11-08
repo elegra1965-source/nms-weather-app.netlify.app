@@ -216,13 +216,13 @@
       lsSet('atlas-last-loc', loc);
       try { var named = loc.city && !/^your /i.test(loc.city); history.replaceState(null, '', named ? '/?city=' + encodeURIComponent(loc.city) : '/'); } catch (e) {}
       render(); status(''); checkAlerts(); syncPush();
-    }).catch(function (e) { console.warn(e); status('SIGNAL LOST — check your connection and try again', true); })
+    }).catch(function (e) { console.warn(e); status('SIGNAL LOST. Check your connection and try again', true); })
       .then(function () { busy = false; if (pending) { var p = pending; pending = null; load(p[0], p[1]); } });
   }
   function search(q) {
     status('◈ SCANNING FOR "' + q.toUpperCase() + '"…');
-    forwardGeocode(q).then(function (g) { if (!g) { status('LOCATION NOT FOUND — try a city name', true); return; } $('loc').value = ''; load(g); })
-      .catch(function () { status('SIGNAL LOST — try again', true); });
+    forwardGeocode(q).then(function (g) { if (!g) { status('LOCATION NOT FOUND. Try a city name', true); return; } $('loc').value = ''; load(g); })
+      .catch(function () { status('SIGNAL LOST. Try again', true); });
   }
   function ipLocate() {
     return fetch('https://ipapi.co/json/').then(function (r) { return r.json(); }).then(function (d) {
@@ -231,13 +231,13 @@
     });
   }
   function locate() {
-    if (!navigator.geolocation) { ipLocate().catch(function () { status('Could not find you — type a city instead', true); }); return; }
+    if (!navigator.geolocation) { ipLocate().catch(function () { status('Could not find you. Type a city instead', true); }); return; }
     status('◈ LOCATING…');
     navigator.geolocation.getCurrentPosition(function (p) {
       var lat = +p.coords.latitude.toFixed(3), lon = +p.coords.longitude.toFixed(3);
       reverseGeocode(lat, lon).then(function (g) { load({ lat: lat, lon: lon, city: g.city, country: g.country }); })
         .catch(function () { load({ lat: lat, lon: lon, city: 'Your location', country: '' }); });
-    }, function () { ipLocate().catch(function () { status('Location blocked — type a city instead', true); }); }, { timeout: 10000, maximumAge: 600000 });
+    }, function () { ipLocate().catch(function () { status('Location blocked. Type a city instead', true); }); }, { timeout: 10000, maximumAge: 600000 });
   }
 
   // ---------- render ----------
@@ -268,7 +268,7 @@
     $('biomeTitle').textContent = b.title; $('biomeDesc').textContent = b.desc;
     $('atlasLine').textContent = atlasLine(w, b, S.aqi);
     $('tagClass').textContent = 'CLASS · ' + b.cls;
-    document.title = cv(w.temp) + '° ' + (WMO[w.code] || '') + ' · ' + w.city + ' — NMS Weather';
+    document.title = cv(w.temp) + '° ' + (WMO[w.code] || '') + ' · ' + w.city + ' | NMS Weather';
     renderRing(w); renderHazards(w); renderHourly(); renderDays(w); renderTiles(w); renderStorm(w); renderShare(w); renderRadar();
     updateClockAndAge();
   }
@@ -432,7 +432,7 @@
 
   function renderShare(w) {
     var url = location.origin + '/?city=' + encodeURIComponent(w.city);
-    var txt = '◈ ATLAS WEATHER — ' + w.city.toUpperCase() + ' · ' + deg(w.temp) + ' ' + (WMO[w.code] || '') + ' · My weather as a No Man\'s Sky planet: ' + translate(w, S.aqi).title;
+    var txt = '◈ ATLAS WEATHER · ' + w.city.toUpperCase() + ' · ' + deg(w.temp) + ' ' + (WMO[w.code] || '') + ' · My weather as a No Man\'s Sky planet: ' + translate(w, S.aqi).title;
     $('shareX').href = 'https://x.com/intent/tweet?text=' + encodeURIComponent(txt) + '&url=' + encodeURIComponent(url);
     $('shareReddit').href = 'https://reddit.com/submit?url=' + encodeURIComponent(url) + '&title=' + encodeURIComponent(txt);
     $('copyLink').onclick = function () { copy(url, '✓ Forecast link copied'); };
