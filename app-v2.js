@@ -291,6 +291,9 @@
   }
 
   function hazWord(v) { return v < 25 ? ['SAFE', '#00ff88', 'rgba(0,255,136,.35)'] : v < 50 ? ['MILD', '#f0a500', 'rgba(240,165,0,.35)'] : v < 75 ? ['HIGH', '#ff8c00', 'rgba(255,140,0,.4)'] : ['EXTREME', '#ff3322', 'rgba(255,51,34,.45)']; }
+  // Toxic row uses the same EU AQI words/colours as the Air quality card (one word for one reading)
+  function aqHaz(a) { return a <= 20 ? ['GOOD', '#00ff88'] : a <= 40 ? ['FAIR', '#00e5ff'] : a <= 60 ? ['MODERATE', '#f0a500'] : a <= 80 ? ['POOR', '#ff8c00'] : ['VERY POOR', '#ff3322']; }
+  function aqExposure(a) { return a == null ? 10 : a <= 40 ? a * 0.6 : a <= 60 ? 25 + (a - 41) * 1.25 : a <= 80 ? 50 + (a - 61) * 1.25 : 75 + Math.min(25, (a - 81) * 1.25); }
   function renderHazards(w) {
     var heat = clamp(Math.round((w.temp - 22) * 5.5), 0, 100);
     var cold = clamp(Math.round((12 - w.feels) * 4.5), 0, 100);
@@ -303,13 +306,13 @@
       ['Toxic', 'Air quality ' + (S.aqi == null ? '—' : S.aqi), tox, HAZ_ICON.tox]
     ];
     $('hazRows').innerHTML = rows.map(function (r) {
-      var hw = hazWord(r[2]);
+      var hw = (r[0] === 'Toxic' && S.aqi != null) ? aqHaz(S.aqi) : hazWord(r[2]);
       return '<div class="haz-row"><img class="haz-ic" src="' + r[3] + '" alt="" aria-hidden="true">' +
         '<div style="grid-area:nm;line-height:1.2;min-width:0"><div style="font-family:var(--disp);font-size:12px;font-weight:700;letter-spacing:1.5px;color:var(--white);text-transform:uppercase">' + r[0] + '</div><div style="font-size:13.5px;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(r[1]) + '</div></div>' +
         '<div class="haz-bar"><div style="width:' + Math.max(4, r[2]) + '%;background:repeating-linear-gradient(90deg,' + hw[1] + ' 0 8px,transparent 8px 10px);box-shadow:0 0 10px ' + hw[1] + '"></div></div>' +
         '<div class="mono" style="grid-area:wd;font-size:13px;letter-spacing:1px;color:' + hw[1] + ';text-align:right">' + hw[0] + ' <span style="color:var(--text-dim)">' + r[2] + '%</span></div></div>';
     }).join('');
-    var worst = Math.max(heat, cold, rad, tox), pw = hazWord(worst), protect = worst < 25 ? 100 : Math.round(100 - (worst - 25) * 0.6);
+    var worst = Math.max(heat, cold, rad, aqExposure(S.aqi)), pw = hazWord(worst), protect = worst < 25 ? 100 : Math.round(100 - (worst - 25) * 0.6);
     $('protect').textContent = protect;
     var arc = $('shieldArc'); arc.setAttribute('stroke', pw[1]); arc.setAttribute('stroke-dasharray', protect + ' 100'); arc.style.filter = 'drop-shadow(0 0 6px ' + pw[1] + ')';
     var pwEl = $('protectWord'); pwEl.textContent = pw[0] === 'SAFE' ? 'ALL SYSTEMS NOMINAL' : pw[0] + ' EXPOSURE'; pwEl.style.color = pw[1];
@@ -344,8 +347,9 @@
     var sm = $('sunmark');
     if (target != null) { sm.style.display = 'block'; sm.style.left = (((target + (nowFrac - start)) / 2 + 0.5) / n * 100).toFixed(1) + '%'; $('sunmarkTxt').textContent = label; } else sm.style.display = 'none';
     // summary
-    var wet = w.hourly.slice(0, 24).filter(function (h) { return h.pop >= 50; });
-    var peak = w.hourly.slice(0, 24).reduce(function (a, h) { return h.temp > a.temp ? h : a; }, w.hourly[0]);
+    var ahead = w.hourly.length > 1 ? w.hourly.slice(1, 25) : w.hourly.slice(0, 1); // from the NEXT hour, the current one is already running
+    var wet = ahead.filter(function (h) { return h.pop >= 50; });
+    var peak = ahead.reduce(function (a, h) { return h.temp > a.temp ? h : a; }, ahead[0]);
     $('hourSummary').textContent = wet.length ? 'Rain likely around ' + pad(wet[0].hr) + ':00. Peaks at ' + deg(peak.temp) + ' around ' + pad(peak.hr) + ':00.' : 'Dry for the next 24 hours. Peaks at ' + deg(peak.temp) + ' around ' + pad(peak.hr) + ':00.';
     document.querySelectorAll('.tabs button').forEach(function (bt) { bt.setAttribute('aria-selected', bt.getAttribute('data-m') === S.metric ? 'true' : 'false'); });
   }
@@ -374,7 +378,7 @@
     var dl = Math.max(0, w.setH - w.riseH), dlh = Math.floor(dl), dlm = Math.round((dl - dlh) * 60);
     var fd = Math.round(w.feels - w.temp);
     var pct = function (t) { return (clamp((t + 10) / 50, 0, 1) * 100).toFixed(1) + '%'; };
-    var comfort = w.dew < 10 ? 'DRY' : w.dew < 16 ? 'COMFORTABLE' : w.dew < 20 ? 'MUGGY' : 'OPPRESSIVE';
+    var comfort = w.dew >= 20 ? 'OPPRESSIVE' : w.dew >= 16 ? 'MUGGY' : w.hum >= 85 ? 'SATURATED' : w.hum >= 60 ? 'DAMP' : w.hum >= 30 ? 'COMFORTABLE' : 'DRY';
     var presAngle = clamp((w.pres - 1013) * 3, -80, 80);
     var trend = w.presTrend <= -1 ? '▼ FALLING' : w.presTrend >= 1 ? '▲ RISING' : '● STEADY';
     var presWord = w.pres < 1000 ? 'Low pressure · unsettled, stormy' : w.pres < 1010 ? 'Below average · changeable' : w.pres > 1020 ? 'High pressure · settled' : 'Near average · steady';
