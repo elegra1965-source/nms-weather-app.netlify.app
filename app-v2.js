@@ -674,7 +674,7 @@
   function startRadar() {
     clearTimeout(RD.timer);
     var anim = RD.playing && S.fx && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    $('rdPlay').textContent = anim ? '❚❚' : '▶'; $('rdPlay').setAttribute('aria-label', anim ? 'Pause radar animation' : 'Play radar animation');
+    $('rdPlay').innerHTML = '<img class="ci" src="/icons/crystal/ci-' + (anim ? 'pause' : 'play-tour') + '.webp" alt="" width="22" height="22">'; $('rdPlay').setAttribute('aria-label', anim ? 'Pause radar animation' : 'Play radar animation');
     if (!anim || RD.frames.length < 2) return;
     (function step() {
       var last = RD.i >= RD.frames.length - 1;
@@ -696,15 +696,15 @@
 
   // ---------- alerts ----------
   var ALERT_ROWS = [
-    ['rain', '🌧', 'Rain starting soon', 'A heads-up before rain or snow starts where you are'],
+    ['rain', '<img class="ci" src="/icons/crystal/ci-rain.webp" alt="" width="22" height="22">', 'Rain starting soon', 'A heads-up before rain or snow starts where you are'],
     ['severe', '<img class="ci" src="/icons/crystal/ci-alert.webp" alt="" width="22" height="22">', 'Extreme weather', 'Thunderstorms, heavy rain or snow, gales, extreme heat or frost'],
-    ['temp', '🌡', 'Big temperature change', 'When it is about to get 5° warmer or colder within 3 hours'],
-    ['daily', '☀', 'Morning briefing', 'Today’s forecast and your biome match after 07:00'],
-    ['tomorrow', '🌙', 'Evening outlook', 'Tomorrow’s forecast, rain chance and wind after 18:00'],
-    ['survey', '◈', 'New planetary survey', 'When today’s 8 worlds refresh at 00:00 UTC'],
-    ['expNew', '🚀', 'New expedition live', 'The day a new No Man’s Sky expedition starts'],
-    ['expEnd', '⏳', 'Expedition ending', 'A last call 24 hours before the current expedition closes'],
-    ['news', '✨', 'Major app updates', 'Big new features on the Hub sites only, never bug fixes. A few times a month at most']
+    ['temp', '<img class="ci" src="/icons/crystal/ci-temp.webp" alt="" width="22" height="22">', 'Big temperature change', 'When it is about to get 5° warmer or colder within 3 hours'],
+    ['daily', '<img class="ci" src="/icons/crystal/ci-sun.webp" alt="" width="22" height="22">', 'Morning briefing', 'Today’s forecast and your biome match after 07:00'],
+    ['tomorrow', '<img class="ci" src="/icons/crystal/ci-moon.webp" alt="" width="22" height="22">', 'Evening outlook', 'Tomorrow’s forecast, rain chance and wind after 18:00'],
+    ['survey', '<img class="ci" src="/icons/crystal/ci-survey.webp" alt="" width="22" height="22">', 'New planetary survey', 'When today’s 8 worlds refresh at 00:00 UTC'],
+    ['expNew', '<img class="ci" src="/icons/crystal/ci-rocket.webp" alt="" width="22" height="22">', 'New expedition live', 'The day a new No Man’s Sky expedition starts'],
+    ['expEnd', '<img class="ci" src="/icons/crystal/ci-hourglass.webp" alt="" width="22" height="22">', 'Expedition ending', 'A last call 24 hours before the current expedition closes'],
+    ['news', '<img class="ci" src="/icons/crystal/ci-news.webp" alt="" width="22" height="22">', 'Major app updates', 'Big new features on the Hub sites only, never bug fixes. A few times a month at most']
   ];
   function renderAlertPanel() {
     $('alertRows').innerHTML = ALERT_ROWS.map(function (r) {

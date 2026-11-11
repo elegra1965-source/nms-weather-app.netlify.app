@@ -25,6 +25,10 @@ html,body{height:100%;background:var(--bg);color:var(--text);
 /* 8 biome tiles, matching the real app's "8 worlds surveyed daily" line --
    the 9th slot (this page) has no biome at all, shown as a dead sensor
    rather than a copied tile with an X on it. */
+.warn404{width:120px;height:120px;object-fit:contain;filter:drop-shadow(0 0 16px rgba(255,160,0,0.65));animation:w404in 2.4s cubic-bezier(.2,.8,.25,1) both,w404buzz 4.7s linear 3.2s infinite}
+@keyframes w404in{0%{transform:scale(.05);opacity:0}60%{opacity:1}80%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+@keyframes w404buzz{0%{transform:none;filter:drop-shadow(0 0 16px rgba(255,160,0,0.65))}0.364%{transform:translateX(-3.00px) rotate(-2.00deg);filter:drop-shadow(0 0 32px rgba(255,160,0,0.95))}0.727%{transform:translateX(2.77px) rotate(1.85deg);filter:drop-shadow(0 0 32px rgba(255,160,0,0.95))}1.091%{transform:translateX(-2.54px) rotate(-1.69deg);filter:drop-shadow(0 0 32px rgba(255,160,0,0.95))}1.455%{transform:translateX(2.31px) rotate(1.54deg);filter:drop-shadow(0 0 32px rgba(255,160,0,0.95))}1.818%{transform:translateX(-2.08px) rotate(-1.38deg);filter:drop-shadow(0 0 32px rgba(255,160,0,0.95))}2.182%{transform:translateX(1.85px) rotate(1.23deg);filter:drop-shadow(0 0 32px rgba(255,160,0,0.95))}2.545%{transform:translateX(-1.62px) rotate(-1.08deg);filter:drop-shadow(0 0 32px rgba(255,160,0,0.95))}2.909%{transform:translateX(1.38px) rotate(0.92deg);filter:drop-shadow(0 0 32px rgba(255,160,0,0.95))}3.273%{transform:translateX(-1.15px) rotate(-0.77deg);filter:drop-shadow(0 0 32px rgba(255,160,0,0.95))}3.636%{transform:translateX(0.92px) rotate(0.62deg);filter:drop-shadow(0 0 32px rgba(255,160,0,0.95))}4.255%,100%{transform:none;filter:drop-shadow(0 0 16px rgba(255,160,0,0.65))}}
+@media (prefers-reduced-motion:reduce){.warn404{animation:none}}
 .biomes{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:420px}
 .tile{width:42px;height:42px;border-radius:8px;border:1px solid var(--border);
   display:flex;align-items:center;justify-content:center;font-size:16px;
@@ -57,7 +61,7 @@ h1{font-family:'Orbitron',sans-serif;font-weight:700;font-size:clamp(19px,5vw,28
 <div class="wrap">
   <div class="tag">Sensor fault</div>
 
-  <div class="biomes" id="biomes"></div>
+  <img class="warn404" src="/icons/crystal/ci-alert-256.webp" alt="" width="96" height="96">
 
   <h1>No reading for this coordinate</h1>
   <p class="sub">Atlas Weather Station surveys <b>8 real charted worlds</b> daily —
@@ -75,16 +79,6 @@ h1{font-family:'Orbitron',sans-serif;font-weight:700;font-size:clamp(19px,5vw,28
 
 <script>
 document.getElementById('path').textContent = location.pathname || '/';
-(function(){
-  var icons = ["☀️","☁️","⛈️","❄️","⚡","🌫️","☃️","🌋"];
-  var box = document.getElementById('biomes');
-  for(var i=0;i<9;i++){
-    var t = document.createElement('div');
-    if(i<8){ t.className='tile'; t.textContent = icons[i] || '\u2600'; }
-    else { t.className='tile dead'; }
-    box.appendChild(t);
-  }
-})();
 </script>
 </body>
 </html>
