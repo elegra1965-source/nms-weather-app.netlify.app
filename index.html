@@ -504,7 +504,7 @@ footer p a{display:inline-block;padding:10px 0;margin:-10px 0}
     <div class="al-col" style="flex-basis:300px">
       <div class="mono" style="font-size:11px;letter-spacing:2px;color:var(--text-dim)">WHAT AN ALERT LOOKS LIKE</div>
       <div class="notif"><img src="/icon-mark.png" alt=""><div style="min-width:0"><div class="h"><span style="font-weight:600;color:var(--text)">ATLAS Weather</span><span>now</span></div><b>◈ Rain starting in 20 min</b><p>Light rain until about 16:00. Take a coat, Traveller.</p></div></div>
-      <div class="notif" style="border-color:rgba(255,140,0,.35)"><img src="/icon-mark.png" alt=""><div style="min-width:0"><div class="h"><span style="font-weight:600;color:var(--text)">ATLAS Weather</span><span>2 min ago</span></div><b style="color:var(--orange)">⚠ Extreme weather approaching</b><p>Thunderstorm expected from 18:00. Gusts up to 70 km/h.</p></div></div>
+      <div class="notif" style="border-color:rgba(255,140,0,.35)"><img src="/icon-mark.png" alt=""><div style="min-width:0"><div class="h"><span style="font-weight:600;color:var(--text)">ATLAS Weather</span><span>2 min ago</span></div><b style="color:var(--orange)"><img class="ci" src="/icons/crystal/ci-alert.webp" alt="" width="16" height="16" style="width:16px;height:16px;margin-right:4px"> Extreme weather approaching</b><p>Thunderstorm expected from 18:00. Gusts up to 70 km/h.</p></div></div>
       <div id="permLine"></div>
       <div class="sub" style="font-size:13.5px">Alerts arrive even when ATLAS is closed. They use the place you last searched or located, rounded to about 11 km. Rain and temperature alerts stay quiet from 23:00 to 07:00. On iPhone, add ATLAS to your Home Screen first (Share ▸ Add to Home Screen). Turning alerts off deletes your sign-up. <a href="/privacy.html">How your data is used</a></div>
       <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:auto">
@@ -645,7 +645,7 @@ footer p a{display:inline-block;padding:10px 0;margin:-10px 0}
       <button type="button" class="rd-play" id="rdPlay" aria-label="Pause radar animation">❚❚</button>
       <input type="range" id="rdSlider" min="0" max="0" value="0" aria-label="Radar time">
       <span class="rd-time" id="rdTime">--:--</span>
-      <button type="button" class="rd-play rd-refresh" id="rdRefresh" aria-label="Refresh radar" title="Refresh radar">⟳</button>
+      <button type="button" class="rd-play rd-refresh" id="rdRefresh" aria-label="Refresh radar" title="Refresh radar"><img class="ci" src="/icons/crystal/ci-refresh.webp" alt="" width="22" height="22"></button>
     </div>
     <div class="rd-credit">Radar by <a href="https://www.rainviewer.com" target="_blank" rel="noopener">RainViewer</a> · Map © <a href="https://www.esri.com" target="_blank" rel="noopener">Esri</a>, HERE, Garmin, © OpenStreetMap contributors</div>
   </section>
@@ -674,9 +674,9 @@ footer p a{display:inline-block;padding:10px 0;margin:-10px 0}
         <button type="button" class="btn btn-primary" id="installBtn2" hidden><img class="ci" src="/icons/crystal/ci-install.webp" alt="" width="22" height="22"> Install app</button>
         <button type="button" class="btn btn-ghost" id="copyLink"><img class="ci" src="/icons/crystal/ci-link.webp" alt="" width="22" height="22"> Copy forecast link</button>
         <button type="button" class="btn btn-ghost nms-fb-btn" id="fbOpenBtn" data-nms-feedback aria-haspopup="dialog"><img class="nms-fb-ico" src="/nms-feedback/fb-ico-review.webp" srcset="/nms-feedback/fb-ico-review@2x.webp 2x" alt="" width="20" height="20"><span data-fbt="REVIEWS &amp; FEEDBACK">REVIEWS &amp; FEEDBACK</span></button>
-        <a class="btn btn-ghost" id="shareX" target="_blank" rel="noopener"><img class="ci" src="/icons/crystal/ci-share.webp" alt="" width="22" height="22"> X</a>
-        <a class="btn btn-ghost" id="shareReddit" target="_blank" rel="noopener"><img class="ci" src="/icons/crystal/ci-share.webp" alt="" width="22" height="22"> Reddit</a>
-        <a class="btn btn-ghost" id="shareDiscord" href="https://discord.com/app" target="_blank" rel="noopener" title="Copies your forecast, then opens Discord so you can paste it in any server or DM"><img class="ci" src="/icons/crystal/ci-share.webp" alt="" width="22" height="22"> Discord</a>
+        <a class="btn btn-ghost" id="shareX" target="_blank" rel="noopener"><img class="ci" src="/icons/crystal/ci-x.webp" alt="" width="22" height="22"> X</a>
+        <a class="btn btn-ghost" id="shareReddit" target="_blank" rel="noopener"><img class="ci" src="/icons/crystal/ci-reddit.webp" alt="" width="22" height="22"> Reddit</a>
+        <a class="btn btn-ghost" id="shareDiscord" href="https://discord.com/app" target="_blank" rel="noopener" title="Copies your forecast, then opens Discord so you can paste it in any server or DM"><img class="ci" src="/icons/crystal/ci-discord.webp" alt="" width="22" height="22"> Discord</a>
       </div>
       <span class="sub">Free, no account, installs as an app.</span>
     </div>
@@ -693,7 +693,7 @@ footer p a{display:inline-block;padding:10px 0;margin:-10px 0}
 </div>
 <div id="toast" role="status" aria-live="polite"></div>
 
-<script src="/app-v2.js?v=35"></script>
+<script src="/app-v2.js?v=36"></script>
 <script src="/mobile.js?v=1"></script>
 <script src="/share.js?v=2"></script>
 <script src="/nms-tour.js?v=3"></script>

@@ -502,7 +502,7 @@
     $('cards').innerHTML = S.worlds.map(function (w, i) {
       var ics = w.res.filter(function (r) { return RES[r]; }).slice(0, 3).map(function (r) { return '<img src="' + RES[r] + '" alt="">'; }).join('');
       return '<button type="button" class="wcard" role="option" aria-selected="' + (i === S.world) + '" data-i="' + i + '">' +
-        '<div class="wimg" style="background-image:url(\'' + CARD(IMGKEY[w.biome]) + '\')"><span class="n">WORLD ' + (i + 1) + '/' + S.worlds.length + '</span>' + (w.extreme ? '<span class="x">⚠ EXTREME</span>' : '') +
+        '<div class="wimg" style="background-image:url(\'' + CARD(IMGKEY[w.biome]) + '\')"><span class="n">WORLD ' + (i + 1) + '/' + S.worlds.length + '</span>' + (w.extreme ? '<span class="x"><img class="ci" src="/icons/crystal/ci-alert.webp" alt="" width="16" height="16" style="width:16px;height:16px;margin-right:4px">EXTREME</span>' : '') +
         '<span class="sys"><span class="sdot" style="background:' + (STAR[w.star] || '#f0c040') + ';box-shadow:0 0 8px ' + (STAR[w.star] || '#f0c040') + '"></span>' + esc(w.sys) + '</span>' + (w.discS ? '<img class="almd" src="' + esc(w.discS) + '" alt="" loading="lazy" onerror="this.remove()">' : planetSVG(w, 'almd')) + '</div>' +
         '<div class="wbody"><span class="nm">' + esc(w.name) + '</span><span class="bm">' + esc(biomeLine(w)) + '</span><span class="wt">' + esc(w.weather) + '</span><span class="ft"><span class="by">by ' + esc(w.by) + '</span><span class="ics">' + ics + '</span></span></div></button>';
     }).join('');
@@ -526,10 +526,10 @@
       '<div class="addr"><div style="display:flex;flex-wrap:wrap;gap:8px"><span style="padding:3px 10px;border-radius:6px;background:rgba(0,0,0,.7);border:1px solid rgba(240,165,0,.5);font-family:var(--disp);font-size:11px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase">' + esc(biomeLine(w)) + '</span>' + (w.extreme ? '<span class="mono" style="padding:3px 10px;border-radius:6px;background:rgba(0,0,0,.7);border:1px solid rgba(255,140,0,.6);font-size:12px;letter-spacing:1.5px;color:var(--orange)">⚠ EXTREME WEATHER</span>' : '') + '</div>' +
       '<div class="addrbox"><div class="mono" style="display:flex;justify-content:space-between;gap:16px;font-size:11px;letter-spacing:2px;color:var(--text-dim)"><span>PORTAL ADDRESS · ' + esc(w.galaxy.toUpperCase()) + '</span><span>GLYPHS + HEX</span></div><div class="glyphs">' + glyphs + '</div><div class="hex">' + w.glyph + ' <button type="button" class="copy" id="copyAddr">COPY</button></div></div></div></div>' +
       '<div class="scan-info"><div class="sv-name">' + (w.disc ? '<img class="almdisc" src="' + esc(w.disc) + '" alt="" onerror="this.remove()">' : planetSVG(w, 'almdisc')) + '<div style="min-width:0"><div class="mono" style="font-size:12px;letter-spacing:3px;color:var(--text-dim)">FULL SCAN · WORLD ' + (i + 1) + '/' + S.worlds.length + '</div><div style="font-family:var(--disp);font-weight:800;font-size:26px;letter-spacing:1px;color:var(--white);line-height:1.2">' + esc(w.name) + '</div><div style="font-size:15px;color:rgba(207,224,240,.7)">in the <span style="color:var(--white)">' + esc(w.sys) + '</span> system · <span style="color:' + (STAR[w.star] || '#f0c040') + '">' + esc(w.star) + ' star</span> · ' + esc(w.galaxy) + '</div>' +
-      '<div class="sumln">' + (w.extreme ? '<span style="color:var(--orange)">⚠ ' + esc(w.weather) + '</span>' : esc(w.weather)) + (w.sent ? ' · <span>Sentinels:</span> <b>' + esc(w.sent) + '</b>' : '') + '</div></div></div>' +
+      '<div class="sumln">' + (w.extreme ? '<span style="color:var(--orange)"><img class="ci" src="/icons/crystal/ci-alert.webp" alt="" width="16" height="16" style="width:16px;height:16px;margin-right:4px">' + esc(w.weather) + '</span>' : esc(w.weather)) + (w.sent ? ' · <span>Sentinels:</span> <b>' + esc(w.sent) + '</b>' : '') + '</div></div></div>' +
       '<div><button type="button" class="fdbtn" id="fdBtn" aria-expanded="' + FOLD + '" aria-controls="fdBody"><span>◈ FULL SCAN DATA</span><span class="ar" aria-hidden="true">▸</span></button>' +
       '<div class="fdbody" id="fdBody"' + (FOLD ? '' : ' hidden') + '><div class="rows">' +
-      row('WEATHER', w.extreme ? '<span style="color:var(--orange)">⚠ ' + esc(w.weather) + '</span>' : esc(w.weather)) + row('SENTINELS', esc(w.sent || '—')) +
+      row('WEATHER', w.extreme ? '<span style="color:var(--orange)"><img class="ci" src="/icons/crystal/ci-alert.webp" alt="" width="16" height="16" style="width:16px;height:16px;margin-right:4px">' + esc(w.weather) + '</span>' : esc(w.weather)) + row('SENTINELS', esc(w.sent || '—')) +
       row('FLORA', esc(w.flora)) + row('FAUNA', esc(w.fauna)) +
       row('RACE', (race ? '<img src="' + race[0] + '" alt="" style="filter:drop-shadow(0 0 6px ' + race[1] + ')">' : '') + esc(w.race)) +
       row('ECONOMY', esc(w.econ) + (w.wealth && w.wealth !== 'None' ? ' · ' + esc(w.wealth) : '')) +
@@ -697,7 +697,7 @@
   // ---------- alerts ----------
   var ALERT_ROWS = [
     ['rain', '🌧', 'Rain starting soon', 'A heads-up before rain or snow starts where you are'],
-    ['severe', '⚠', 'Extreme weather', 'Thunderstorms, heavy rain or snow, gales, extreme heat or frost'],
+    ['severe', '<img class="ci" src="/icons/crystal/ci-alert.webp" alt="" width="22" height="22">', 'Extreme weather', 'Thunderstorms, heavy rain or snow, gales, extreme heat or frost'],
     ['temp', '🌡', 'Big temperature change', 'When it is about to get 5° warmer or colder within 3 hours'],
     ['daily', '☀', 'Morning briefing', 'Today’s forecast and your biome match after 07:00'],
     ['tomorrow', '🌙', 'Evening outlook', 'Tomorrow’s forecast, rain chance and wind after 18:00'],
