@@ -26,7 +26,7 @@
     var x = c.getContext('2d');
     try { await Promise.all(['900 120px Orbitron', '700 40px Orbitron', '28px "Share Tech Mono"', '600 34px Rajdhani'].map(function (f) { return document.fonts.load(f); })); } catch (e) {}
     var orb = $('orb'), m = orb && orb.style.backgroundImage.match(/url\(["']?([^"')]+)/);
-    var img = m ? await loadImg(m[1]) : null, logo = await loadImg('/icon-mark.png');
+    var img = m ? await loadImg(m[1]) : null, logo = await loadImg('/icon-mark.png?v=20261112');
 
     // background: space + soft cyan glow
     var g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#05090f'); g.addColorStop(1, '#0a1220'); x.fillStyle = g; x.fillRect(0, 0, W, H);

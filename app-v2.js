@@ -325,7 +325,7 @@
     var vals = steps.map(function (h) { return S.metric === 'rain' ? h.pop : S.metric === 'wind' ? spd(h.wind) : cv(h.temp); });
     steps.forEach(function (h, i) {
       var v = vals[i], lab = S.metric === 'rain' ? v + '%' : S.metric === 'wind' ? String(v) : v + '°';
-      cells += '<div class="hcell' + (i === 0 ? ' now' : '') + '"><span class="t">' + (i === 0 ? 'NOW' : pad(h.hr) + ':00') + '</span><img src="' + WX_ICON[iconKind(h.code, h.day)] + '" alt=""><span class="v">' + lab + '</span></div>';
+      cells += '<div class="hcell' + (i === 0 ? ' now' : '') + '"><span class="t">' + (i === 0 ? 'NOW' : pad(h.hr) + ':00') + '</span><img src="' + WX_ICON[iconKind(h.code, h.day)] + '" alt="' + iconKind(h.code, h.day) + '"><span class="v">' + lab + '</span></div>';
     });
     $('hgrid').innerHTML = cells;
     var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals);
@@ -363,7 +363,7 @@
       var gs = (100 / width * 100).toFixed(0) + '%', gp = (left / Math.max(100 - width, 1) * 100).toFixed(0) + '%';
       var dot = i === 0 ? '<i style="left:' + (clamp((w.temp - d.lo) / ((d.hi - d.lo) || 1), 0, 1) * 100).toFixed(0) + '%"></i>' : '';
       var name = i === 0 ? 'TODAY' : DAYN[new Date(d.date + 'T12:00:00Z').getUTCDay()];
-      return '<div class="drow' + (i === 0 ? ' today' : '') + '"><span class="d">' + name + '</span><img src="' + WX_ICON[iconKind(d.code, true)] + '" alt=""><span class="mono" style="font-size:13px;color:var(--cyan)">' + (d.pop >= 20 ? d.pop + '%' : '') + '</span><span class="mono" style="font-size:15px;color:var(--text-dim);text-align:right">' + deg(d.lo) + '</span><div class="rbar"><div style="left:' + left.toFixed(1) + '%;width:' + width.toFixed(1) + '%;background-size:' + gs + ' 100%;background-position:' + gp + ' 0"></div>' + dot + '</div><span style="font-family:var(--disp);font-size:15px;font-weight:700;color:var(--white)">' + deg(d.hi) + '</span></div>';
+      return '<div class="drow' + (i === 0 ? ' today' : '') + '"><span class="d">' + name + '</span><img src="' + WX_ICON[iconKind(d.code, true)] + '" alt="' + iconKind(d.code, true) + '"><span class="mono" style="font-size:13px;color:var(--cyan)">' + (d.pop >= 20 ? d.pop + '%' : '') + '</span><span class="mono" style="font-size:15px;color:var(--text-dim);text-align:right">' + deg(d.lo) + '</span><div class="rbar"><div style="left:' + left.toFixed(1) + '%;width:' + width.toFixed(1) + '%;background-size:' + gs + ' 100%;background-position:' + gp + ' 0"></div>' + dot + '</div><span style="font-family:var(--disp);font-size:15px;font-weight:700;color:var(--white)">' + deg(d.hi) + '</span></div>';
     }).join('');
   }
 
@@ -500,9 +500,9 @@
   function biomeLine(w) { return w.raw && w.raw !== w.biome && w.raw !== 'Swamp' ? w.biome + ' · ' + w.raw : w.biome; }
   function renderCards() {
     $('cards').innerHTML = S.worlds.map(function (w, i) {
-      var ics = w.res.filter(function (r) { return RES[r]; }).slice(0, 3).map(function (r) { return '<img src="' + RES[r] + '" alt="">'; }).join('');
+      var ics = w.res.filter(function (r) { return RES[r]; }).slice(0, 3).map(function (r) { return '<img src="' + RES[r] + '" alt="' + esc(r) + '">'; }).join('');
       return '<button type="button" class="wcard" role="option" aria-selected="' + (i === S.world) + '" data-i="' + i + '">' +
-        '<div class="wimg" style="background-image:url(\'' + CARD(IMGKEY[w.biome]) + '\')"><span class="n">WORLD ' + (i + 1) + '/' + S.worlds.length + '</span>' + (w.extreme ? '<span class="x"><img class="ci" src="/icons/crystal/ci-alert.webp" alt="" width="16" height="16" style="width:16px;height:16px;margin-right:4px">EXTREME</span>' : '') +
+        '<div class="wimg" style="background-image:url(\'' + CARD(IMGKEY[w.biome]) + '\')"><span class="n">WORLD ' + (i + 1) + '/' + S.worlds.length + '</span>' + (w.extreme ? '<span class="x"><img class="ci" src="/icons/crystal/ci-alert.webp?v=20261112" alt="Warning" width="16" height="16" style="width:16px;height:16px;margin-right:4px">EXTREME</span>' : '') +
         '<span class="sys"><span class="sdot" style="background:' + (STAR[w.star] || '#f0c040') + ';box-shadow:0 0 8px ' + (STAR[w.star] || '#f0c040') + '"></span>' + esc(w.sys) + '</span>' + (w.discS ? '<img class="almd" src="' + esc(w.discS) + '" alt="" loading="lazy" onerror="this.remove()">' : planetSVG(w, 'almd')) + '</div>' +
         '<div class="wbody"><span class="nm">' + esc(w.name) + '</span><span class="bm">' + esc(biomeLine(w)) + '</span><span class="wt">' + esc(w.weather) + '</span><span class="ft"><span class="by">by ' + esc(w.by) + '</span><span class="ics">' + ics + '</span></span></div></button>';
     }).join('');
@@ -518,7 +518,7 @@
     var glyphs = w.glyph.split('').map(function (ch) { return '<span><img src="/glyphs/g-' + ch + '.webp" alt="' + ch + '" title="' + ch + '"></span>'; }).join('');
     var T = window.NMS_T || function (s, v) { return String(s).replace(/\{(\w+)\}/g, function (m, k) { return v && v[k] != null ? v[k] : m; }); };
     var row = function (k, v) { return '<div><i>' + k + '</i><span>' + v + '</span></div>'; };
-    var res = w.res.slice(0, 6).map(function (r) { return '<span>' + (RES[r] ? '<img src="' + RES[r] + '" alt="">' : '') + esc(r) + '</span>'; }).join('') + (w.res.length > 6 ? '<span class="more">' + T('+{n} more', { n: w.res.length - 6 }) + '</span>' : '');
+    var res = w.res.slice(0, 6).map(function (r) { return '<span>' + (RES[r] ? '<img src="' + RES[r] + '" alt="' + esc(r) + '">' : '') + esc(r) + '</span>'; }).join('') + (w.res.length > 6 ? '<span class="more">' + T('+{n} more', { n: w.res.length - 6 }) + '</span>' : '');
     var mapUrl = 'https://map.nomansskyhub.app/?arrival=1&addr=' + w.glyph + '&galaxy=' + w.gIndex;
     $('scan').innerHTML =
       '<div class="scan-img" id="scanImg"><div class="blur" style="background-image:url(\'' + hd + '\')"></div><div class="sharp" role="img" aria-label="' + esc(w.biome) + ' biome" style="background-image:url(\'' + hd + '\')"></div><div class="shade"></div><div class="bar" aria-hidden="true"></div>' +
@@ -526,12 +526,12 @@
       '<div class="addr"><div style="display:flex;flex-wrap:wrap;gap:8px"><span style="padding:3px 10px;border-radius:6px;background:rgba(0,0,0,.7);border:1px solid rgba(240,165,0,.5);font-family:var(--disp);font-size:11px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase">' + esc(biomeLine(w)) + '</span>' + (w.extreme ? '<span class="mono" style="padding:3px 10px;border-radius:6px;background:rgba(0,0,0,.7);border:1px solid rgba(255,140,0,.6);font-size:12px;letter-spacing:1.5px;color:var(--orange)">⚠ EXTREME WEATHER</span>' : '') + '</div>' +
       '<div class="addrbox"><div class="mono" style="display:flex;justify-content:space-between;gap:16px;font-size:11px;letter-spacing:2px;color:var(--text-dim)"><span>PORTAL ADDRESS · ' + esc(w.galaxy.toUpperCase()) + '</span><span>GLYPHS + HEX</span></div><div class="glyphs">' + glyphs + '</div><div class="hex">' + w.glyph + ' <button type="button" class="copy" id="copyAddr">COPY</button></div></div></div></div>' +
       '<div class="scan-info"><div class="sv-name">' + (w.disc ? '<img class="almdisc" src="' + esc(w.disc) + '" alt="" onerror="this.remove()">' : planetSVG(w, 'almdisc')) + '<div style="min-width:0"><div class="mono" style="font-size:12px;letter-spacing:3px;color:var(--text-dim)">FULL SCAN · WORLD ' + (i + 1) + '/' + S.worlds.length + '</div><div style="font-family:var(--disp);font-weight:800;font-size:26px;letter-spacing:1px;color:var(--white);line-height:1.2">' + esc(w.name) + '</div><div style="font-size:15px;color:rgba(207,224,240,.7)">in the <span style="color:var(--white)">' + esc(w.sys) + '</span> system · <span style="color:' + (STAR[w.star] || '#f0c040') + '">' + esc(w.star) + ' star</span> · ' + esc(w.galaxy) + '</div>' +
-      '<div class="sumln">' + (w.extreme ? '<span style="color:var(--orange)"><img class="ci" src="/icons/crystal/ci-alert.webp" alt="" width="16" height="16" style="width:16px;height:16px;margin-right:4px">' + esc(w.weather) + '</span>' : esc(w.weather)) + (w.sent ? ' · <span>Sentinels:</span> <b>' + esc(w.sent) + '</b>' : '') + '</div></div></div>' +
+      '<div class="sumln">' + (w.extreme ? '<span style="color:var(--orange)"><img class="ci" src="/icons/crystal/ci-alert.webp?v=20261112" alt="Warning" width="16" height="16" style="width:16px;height:16px;margin-right:4px">' + esc(w.weather) + '</span>' : esc(w.weather)) + (w.sent ? ' · <span>Sentinels:</span> <b>' + esc(w.sent) + '</b>' : '') + '</div></div></div>' +
       '<div><button type="button" class="fdbtn" id="fdBtn" aria-expanded="' + FOLD + '" aria-controls="fdBody"><span>◈ FULL SCAN DATA</span><span class="ar" aria-hidden="true">▸</span></button>' +
       '<div class="fdbody" id="fdBody"' + (FOLD ? '' : ' hidden') + '><div class="rows">' +
-      row('WEATHER', w.extreme ? '<span style="color:var(--orange)"><img class="ci" src="/icons/crystal/ci-alert.webp" alt="" width="16" height="16" style="width:16px;height:16px;margin-right:4px">' + esc(w.weather) + '</span>' : esc(w.weather)) + row('SENTINELS', esc(w.sent || '—')) +
+      row('WEATHER', w.extreme ? '<span style="color:var(--orange)"><img class="ci" src="/icons/crystal/ci-alert.webp?v=20261112" alt="Warning" width="16" height="16" style="width:16px;height:16px;margin-right:4px">' + esc(w.weather) + '</span>' : esc(w.weather)) + row('SENTINELS', esc(w.sent || '—')) +
       row('FLORA', esc(w.flora)) + row('FAUNA', esc(w.fauna)) +
-      row('RACE', (race ? '<img src="' + race[0] + '" alt="" style="filter:drop-shadow(0 0 6px ' + race[1] + ')">' : '') + esc(w.race)) +
+      row('RACE', (race ? '<img src="' + race[0] + '" alt="' + esc(w.race) + ' race" style="filter:drop-shadow(0 0 6px ' + race[1] + ')">' : '') + esc(w.race)) +
       row('ECONOMY', esc(w.econ) + (w.wealth && w.wealth !== 'None' ? ' · ' + esc(w.wealth) : '')) +
       row('CONFLICT', '<span style="color:' + (CONF[w.conflict] || 'var(--white)') + '">' + esc(w.conflict) + '</span>') +
       row('RESOURCES', w.res.length ? T('{n} found', { n: w.res.length }) : '—') + '</div>' +
@@ -696,15 +696,15 @@
 
   // ---------- alerts ----------
   var ALERT_ROWS = [
-    ['rain', '<img class="ci" src="/icons/crystal/ci-rain.webp" alt="" width="22" height="22">', 'Rain starting soon', 'A heads-up before rain or snow starts where you are'],
-    ['severe', '<img class="ci" src="/icons/crystal/ci-alert.webp" alt="" width="22" height="22">', 'Extreme weather', 'Thunderstorms, heavy rain or snow, gales, extreme heat or frost'],
-    ['temp', '<img class="ci" src="/icons/crystal/ci-temp.webp" alt="" width="22" height="22">', 'Big temperature change', 'When it is about to get 5° warmer or colder within 3 hours'],
-    ['daily', '<img class="ci" src="/icons/crystal/ci-sun.webp" alt="" width="22" height="22">', 'Morning briefing', 'Today’s forecast and your biome match after 07:00'],
-    ['tomorrow', '<img class="ci" src="/icons/crystal/ci-moon.webp" alt="" width="22" height="22">', 'Evening outlook', 'Tomorrow’s forecast, rain chance and wind after 18:00'],
-    ['survey', '<img class="ci" src="/icons/crystal/ci-survey.webp" alt="" width="22" height="22">', 'New planetary survey', 'When today’s 8 worlds refresh at 00:00 UTC'],
-    ['expNew', '<img class="ci" src="/icons/crystal/ci-rocket.webp" alt="" width="22" height="22">', 'New expedition live', 'The day a new No Man’s Sky expedition starts'],
-    ['expEnd', '<img class="ci" src="/icons/crystal/ci-hourglass.webp" alt="" width="22" height="22">', 'Expedition ending', 'A last call 24 hours before the current expedition closes'],
-    ['news', '<img class="ci" src="/icons/crystal/ci-news.webp" alt="" width="22" height="22">', 'Major app updates', 'Big new features on the Hub sites only, never bug fixes. A few times a month at most']
+    ['rain', '<img class="ci" src="/icons/crystal/ci-rain.webp?v=20261112" alt="" width="22" height="22">', 'Rain starting soon', 'A heads-up before rain or snow starts where you are'],
+    ['severe', '<img class="ci" src="/icons/crystal/ci-alert.webp?v=20261112" alt="Warning" width="22" height="22">', 'Extreme weather', 'Thunderstorms, heavy rain or snow, gales, extreme heat or frost'],
+    ['temp', '<img class="ci" src="/icons/crystal/ci-temp.webp?v=20261112" alt="" width="22" height="22">', 'Big temperature change', 'When it is about to get 5° warmer or colder within 3 hours'],
+    ['daily', '<img class="ci" src="/icons/crystal/ci-sun.webp?v=20261112" alt="" width="22" height="22">', 'Morning briefing', 'Today’s forecast and your biome match after 07:00'],
+    ['tomorrow', '<img class="ci" src="/icons/crystal/ci-moon.webp?v=20261112" alt="" width="22" height="22">', 'Evening outlook', 'Tomorrow’s forecast, rain chance and wind after 18:00'],
+    ['survey', '<img class="ci" src="/icons/crystal/ci-survey.webp?v=20261112" alt="" width="22" height="22">', 'New planetary survey', 'When today’s 8 worlds refresh at 00:00 UTC'],
+    ['expNew', '<img class="ci" src="/icons/crystal/ci-rocket.webp?v=20261112" alt="" width="22" height="22">', 'New expedition live', 'The day a new No Man’s Sky expedition starts'],
+    ['expEnd', '<img class="ci" src="/icons/crystal/ci-hourglass.webp?v=20261112" alt="" width="22" height="22">', 'Expedition ending', 'A last call 24 hours before the current expedition closes'],
+    ['news', '<img class="ci" src="/icons/crystal/ci-news.webp?v=20261112" alt="" width="22" height="22">', 'Major app updates', 'Big new features on the Hub sites only, never bug fixes. A few times a month at most']
   ];
   function renderAlertPanel() {
     $('alertRows').innerHTML = ALERT_ROWS.map(function (r) {
