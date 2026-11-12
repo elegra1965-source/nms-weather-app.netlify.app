@@ -348,6 +348,15 @@ svg.almdisc{width:72px;height:72px;margin:0 2px 0 -2px;border-radius:0;overflow:
 @media (max-width:440px){.sv-btns{gap:8px}.sv-btns .btn{padding-left:12px;padding-right:12px;letter-spacing:1px;font-size:11px}}
 .res i{border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(240,165,0,.12);border:1px solid rgba(240,165,0,.4);color:var(--gold);font-size:13px;font-style:normal}
 
+/* FAQ fold (2026-11-12): closed by default; the text is in the page so search engines read it. Uses the app's own panel + corner brackets */
+.faq{padding:0}.faq>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:18px 22px;min-height:44px}
+.faq>summary::-webkit-details-marker{display:none}.faq>summary:focus-visible{outline:2px solid var(--cyan);outline-offset:-4px;border-radius:14px}
+.faq-ttl{flex:1;color:var(--white);font-size:15px}.faq .arr{color:var(--cyan);transition:transform .25s}.faq[open] .arr{transform:rotate(180deg)}
+.faq-body{padding:0 22px 12px}.faq-q{border-top:1px solid var(--border-soft)}
+.faq-q summary{cursor:pointer;padding:12px 0;color:var(--white);font-size:14px;list-style:none;display:flex;gap:8px;min-height:44px;align-items:center}
+.faq-q summary::-webkit-details-marker{display:none}.faq-q summary::before{content:"\25B8";color:var(--cyan);transition:transform .25s;display:inline-block;flex:none;width:10px}
+.faq-q[open] summary::before{transform:rotate(90deg)}.faq-q p{margin:0 0 12px 18px;color:var(--text-dim);font-size:14px;line-height:1.55}
+@media (prefers-reduced-motion:reduce){.faq .arr,.faq-q summary::before{transition:none}}
 /* footer */
 footer{display:flex;flex-direction:column;gap:18px;padding:26px 0 10px;border-top:1px solid var(--border-soft)}
 .fl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
@@ -445,6 +454,62 @@ footer p a{display:inline-block;padding:10px 0;margin:-10px 0}
 </style>
 <style>.share-planet{margin-top:4px;border-color:rgba(240,165,0,.5);color:var(--gold)}.share-planet:disabled{opacity:.6;cursor:wait}</style>
 <link rel="stylesheet" href="/mobile.css?v=20261112">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "FAQPage",
+ "mainEntity": [
+  {
+   "@type": "Question",
+   "name": "What is NMS Weather?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "A free weather app themed on No Man's Sky. Your real local forecast is shown as an in-game style planet scan: the weather picks a biome, and the sky, effects and exosuit hazard readings follow it."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "How do I check the weather for a place?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Type a city and search, or press Scan with the box empty to use your location. You can switch between °C and °F."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "What do the exosuit hazard bars mean?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "They show heat, cold, UV and air quality as shield bars with the game's own hazard icons, so you can see how your exosuit would cope with today's real weather."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "What do the alerts do?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "If you turn them on, you get notifications for rain soon, extreme weather, big temperature changes, a morning briefing and new expeditions, even when the app is closed. They are optional and arrive in your language."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Is it free, and is my data saved?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Yes, it is free, with no account and no ads. Your last place, units and settings stay on your own device. If you turn alerts on, a delivery address for your device is kept so alerts can reach you, with no name, email or phone number."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Can I install it as an app?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Yes. It installs on phones and desktops, and it checks for a new version each time you open it."
+   }
+  }
+ ]
+}
+</script>
 </head>
 <body>
 <h1 class="sr-only">NMS Weather Station. Your real weather as a No Man's Sky planet scan</h1>
@@ -669,6 +734,12 @@ footer p a{display:inline-block;padding:10px 0;margin:-10px 0}
     <div class="cards" id="cards" role="listbox" aria-label="Worlds"></div>
     <div class="scan" id="scan"></div>
   </section>
+
+  <details class="panel faq" id="faq">
+    <span class="corner-tl"></span><span class="corner-br"></span>
+    <summary><span class="kicker">Help</span><span class="faq-ttl">How it works &middot; FAQ</span><span class="arr" aria-hidden="true">&#9662;</span></summary>
+    <div class="faq-body"><details class="faq-q"><summary>What is NMS Weather?</summary><p>A free weather app themed on No Man's Sky. Your real local forecast is shown as an in-game style planet scan: the weather picks a biome, and the sky, effects and exosuit hazard readings follow it.</p></details><details class="faq-q"><summary>How do I check the weather for a place?</summary><p>Type a city and search, or press Scan with the box empty to use your location. You can switch between °C and °F.</p></details><details class="faq-q"><summary>What do the exosuit hazard bars mean?</summary><p>They show heat, cold, UV and air quality as shield bars with the game's own hazard icons, so you can see how your exosuit would cope with today's real weather.</p></details><details class="faq-q"><summary>What do the alerts do?</summary><p>If you turn them on, you get notifications for rain soon, extreme weather, big temperature changes, a morning briefing and new expeditions, even when the app is closed. They are optional and arrive in your language.</p></details><details class="faq-q"><summary>Is it free, and is my data saved?</summary><p>Yes, it is free, with no account and no ads. Your last place, units and settings stay on your own device. If you turn alerts on, a delivery address for your device is kept so alerts can reach you, with no name, email or phone number.</p></details><details class="faq-q"><summary>Can I install it as an app?</summary><p>Yes. It installs on phones and desktops, and it checks for a new version each time you open it.</p></details></div>
+  </details>
 
   <!-- footer -->
   <footer>
