@@ -66,6 +66,10 @@ Part of the [No Man's Sky Hub](https://nomansskyhub.app) family of fan tools.
 
   <img src="screenshots/08-feedback-other-reply-email.jpg" alt="The feedback pop-up with the four chips (Review, Bug, Idea / request, Other), Weather ticked, and the optional reply email (example text)" width="460">
 
+- **New crystal icons.** Every icon on the weather app has been redrawn in one faceted crystal style, so all six sites match, and every picture has a text description for screen readers. The icons are toned down a little so they don't shout over the content.
+
+  <img src="screenshots/icons-crystal.jpg" alt="The new crystal icons on the weather app: buttons and menus drawn as faceted cyan crystals with amber accents" width="300">
+
 </details>
 
 ## New here? Take the tour
