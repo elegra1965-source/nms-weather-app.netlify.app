@@ -85,7 +85,7 @@ export default async () => {
     let changed = false, gone = false;
     for (const a of alerts) {
       try {
-        await webpush.sendNotification(rec.sub, JSON.stringify({ title: a.title, body: a.body, tag: a.tag, url: a.url || '/' }), { TTL: 3600, urgency: a.tag === 'atlas-severe' ? 'high' : 'normal' });
+        await webpush.sendNotification(rec.sub, JSON.stringify({ title: a.title, body: a.body, tag: a.tag, url: a.url || '/' }), { TTL: 10800, urgency: 'high' });
         rec.sent[a.key] = Date.now(); changed = true; sentCount++;
         // one line per alert sent: alert key, app, language, short non-identifying id (never the endpoint or location)
         console.log(`push-check: sent ${a.key} -> ${app}/${(rec.prefs && rec.prefs.lang) || rec.lang || 'en'}/${String(k).slice(0, 6)}`);
