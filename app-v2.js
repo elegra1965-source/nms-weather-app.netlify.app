@@ -696,15 +696,15 @@
 
   // ---------- alerts ----------
   var ALERT_ROWS = [
-    ['rain', '<img class="ci" src="/icons/crystal/ci-rain.webp?v=20261112" alt="" width="22" height="22">', 'Rain starting soon', 'A heads-up before rain or snow starts where you are'],
+    ['rain', '<img class="ci" src="/icons/crystal/ci-rain.webp?v=20261112" alt="Rain icon" width="22" height="22">', 'Rain starting soon', 'A heads-up before rain or snow starts where you are'],
     ['severe', '<img class="ci" src="/icons/crystal/ci-alert.webp?v=20261112" alt="Warning" width="22" height="22">', 'Extreme weather', 'Thunderstorms, heavy rain or snow, gales, extreme heat or frost'],
-    ['temp', '<img class="ci" src="/icons/crystal/ci-temp.webp?v=20261112" alt="" width="22" height="22">', 'Big temperature change', 'When it is about to get 5° warmer or colder within 3 hours'],
-    ['daily', '<img class="ci" src="/icons/crystal/ci-sun.webp?v=20261112" alt="" width="22" height="22">', 'Morning briefing', 'Today’s forecast and your biome match after 07:00'],
-    ['tomorrow', '<img class="ci" src="/icons/crystal/ci-moon.webp?v=20261112" alt="" width="22" height="22">', 'Evening outlook', 'Tomorrow’s forecast, rain chance and wind after 18:00'],
-    ['survey', '<img class="ci" src="/icons/crystal/ci-survey.webp?v=20261112" alt="" width="22" height="22">', 'New planetary survey', 'When today’s 8 worlds refresh at 00:00 UTC'],
-    ['expNew', '<img class="ci" src="/icons/crystal/ci-rocket.webp?v=20261112" alt="" width="22" height="22">', 'New expedition live', 'The day a new No Man’s Sky expedition starts'],
-    ['expEnd', '<img class="ci" src="/icons/crystal/ci-hourglass.webp?v=20261112" alt="" width="22" height="22">', 'Expedition ending', 'A last call 24 hours before the current expedition closes'],
-    ['news', '<img class="ci" src="/icons/crystal/ci-news.webp?v=20261112" alt="" width="22" height="22">', 'Major app updates', 'Big new features on the Hub sites only, never bug fixes. A few times a month at most']
+    ['temp', '<img class="ci" src="/icons/crystal/ci-temp.webp?v=20261112" alt="Temperature icon" width="22" height="22">', 'Big temperature change', 'When it is about to get 5° warmer or colder within 3 hours'],
+    ['daily', '<img class="ci" src="/icons/crystal/ci-sun.webp?v=20261112" alt="Sun icon" width="22" height="22">', 'Morning briefing', 'Today’s forecast and your biome match after 07:00'],
+    ['tomorrow', '<img class="ci" src="/icons/crystal/ci-moon.webp?v=20261112" alt="Moon icon" width="22" height="22">', 'Evening outlook', 'Tomorrow’s forecast, rain chance and wind after 18:00'],
+    ['survey', '<img class="ci" src="/icons/crystal/ci-survey.webp?v=20261112" alt="Survey icon" width="22" height="22">', 'New planetary survey', 'When today’s 8 worlds refresh at 00:00 UTC'],
+    ['expNew', '<img class="ci" src="/icons/crystal/ci-rocket.webp?v=20261112" alt="Rocket icon" width="22" height="22">', 'New expedition live', 'The day a new No Man’s Sky expedition starts'],
+    ['expEnd', '<img class="ci" src="/icons/crystal/ci-hourglass.webp?v=20261112" alt="Hourglass icon" width="22" height="22">', 'Expedition ending', 'A last call 24 hours before the current expedition closes'],
+    ['news', '<img class="ci" src="/icons/crystal/ci-news.webp?v=20261112" alt="News icon" width="22" height="22">', 'Major app updates', 'Big new features on the Hub sites only, never bug fixes. A few times a month at most']
   ];
   function renderAlertPanel() {
     $('alertRows').innerHTML = ALERT_ROWS.map(function (r) {
