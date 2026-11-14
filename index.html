@@ -455,7 +455,7 @@ footer p a{display:inline-block;padding:10px 0;margin:-10px 0}
   <!-- header -->
   <header class="top">
     <a class="brand" href="https://nomansskyhub.app" title="No Man's Sky Hub">
-      <span class="mark" aria-hidden="true"><img src="/icon-mark.png" alt=""></span>
+      <span class="mark" aria-hidden="true"><img src="/icon-mark.png" alt="NMS Weather logo"></span>
       <span><span class="brand-name" translate="no">Atlas Weather Station</span><span class="brand-clock" id="clock">LOCAL --:--:-- · UTC --:--</span></span>
     </a>
     <form class="search" id="searchForm" role="search">
@@ -476,7 +476,7 @@ footer p a{display:inline-block;padding:10px 0;margin:-10px 0}
         <button type="button" id="unitC" aria-pressed="true">°C</button>
         <button type="button" id="unitF" aria-pressed="false">°F</button>
       </div>
-      <button type="button" class="tool-btn lang-tool" id="langBtn" data-lang-btn title="Language" aria-label="Language"><img class="ci" src="/icons/crystal/ci-globe.webp" alt="" width="22" height="22"> <span data-lang-code translate="no">EN</span></button>
+      <button type="button" class="tool-btn lang-tool" id="langBtn" data-lang-btn title="Language" aria-label="Language"><img class="ci" src="/icons/crystal/ci-globe.webp" alt="Language globe icon" width="22" height="22"> <span data-lang-code translate="no">EN</span></button>
       <button type="button" class="tool-btn" id="alertsBtn" aria-expanded="false" aria-controls="alertPanel" title="Weather alerts: get a notification when rain or storms are coming, or the temperature changes a lot">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 21h4"/></svg>
         <span id="alertsLabel">ALERTS</span>
@@ -485,7 +485,7 @@ footer p a{display:inline-block;padding:10px 0;margin:-10px 0}
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></svg>
         <span id="fxLabel">EFFECTS ON</span>
       </button>
-      <button type="button" class="tool-btn" id="installBtn" hidden style="border:1px solid rgba(0,229,255,.3);color:var(--cyan)"><img class="ci" src="/icons/crystal/ci-install.webp" alt="" width="22" height="22"> INSTALL</button>
+      <button type="button" class="tool-btn" id="installBtn" hidden style="border:1px solid rgba(0,229,255,.3);color:var(--cyan)"><img class="ci" src="/icons/crystal/ci-install.webp" alt="Install app icon" width="22" height="22"> INSTALL</button>
     </div>
   </header>
   <div class="status-line" id="status" role="status" aria-live="polite"></div>
@@ -503,8 +503,8 @@ footer p a{display:inline-block;padding:10px 0;margin:-10px 0}
     </div>
     <div class="al-col" style="flex-basis:300px">
       <div class="mono" style="font-size:11px;letter-spacing:2px;color:var(--text-dim)">WHAT AN ALERT LOOKS LIKE</div>
-      <div class="notif"><img src="/icon-mark.png" alt=""><div style="min-width:0"><div class="h"><span style="font-weight:600;color:var(--text)">ATLAS Weather</span><span>now</span></div><b>◈ Rain starting in 20 min</b><p>Light rain until about 16:00. Take a coat, Traveller.</p></div></div>
-      <div class="notif" style="border-color:rgba(255,140,0,.35)"><img src="/icon-mark.png" alt=""><div style="min-width:0"><div class="h"><span style="font-weight:600;color:var(--text)">ATLAS Weather</span><span>2 min ago</span></div><b style="color:var(--orange)"><img class="ci" src="/icons/crystal/ci-alert.webp" alt="" width="16" height="16" style="width:16px;height:16px;margin-right:4px"> Extreme weather approaching</b><p>Thunderstorm expected from 18:00. Gusts up to 70 km/h.</p></div></div>
+      <div class="notif"><img src="/icon-mark.png" alt="NMS Weather logo"><div style="min-width:0"><div class="h"><span style="font-weight:600;color:var(--text)">ATLAS Weather</span><span>now</span></div><b>◈ Rain starting in 20 min</b><p>Light rain until about 16:00. Take a coat, Traveller.</p></div></div>
+      <div class="notif" style="border-color:rgba(255,140,0,.35)"><img src="/icon-mark.png" alt="NMS Weather logo"><div style="min-width:0"><div class="h"><span style="font-weight:600;color:var(--text)">ATLAS Weather</span><span>2 min ago</span></div><b style="color:var(--orange)"><img class="ci" src="/icons/crystal/ci-alert.webp" alt="Alert icon" width="16" height="16" style="width:16px;height:16px;margin-right:4px"> Extreme weather approaching</b><p>Thunderstorm expected from 18:00. Gusts up to 70 km/h.</p></div></div>
       <div id="permLine"></div>
       <div class="sub" style="font-size:13.5px">Alerts arrive even when ATLAS is closed. They use the place you last searched or located, rounded to about 11 km. Rain and temperature alerts stay quiet from 23:00 to 07:00. On iPhone, add ATLAS to your Home Screen first (Share ▸ Add to Home Screen). Turning alerts off deletes your sign-up. <a href="/privacy.html">How your data is used</a></div>
       <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:auto">
@@ -542,7 +542,7 @@ footer p a{display:inline-block;padding:10px 0;margin:-10px 0}
         <div class="locglyph" id="locGlyph"></div>
         <div class="temp"><b id="tempNow">--</b><span id="tempUnit">°C</span></div>
         <div class="cond">
-          <img id="condIcon" src="/icons/30.png" alt="">
+          <img id="condIcon" src="/icons/30.png" alt="Weather condition icon">
           <span class="lab" id="condLabel">Scanning…</span>
           <span class="hl" id="hiLo"></span>
         </div>
@@ -642,10 +642,10 @@ footer p a{display:inline-block;padding:10px 0;margin:-10px 0}
       <div class="rd-msg" id="rdMsg">◈ ACQUIRING RADAR…</div>
     </div>
     <div class="rd-ctrl">
-      <button type="button" class="rd-play" id="rdPlay" aria-label="Pause radar animation"><img class="ci" src="/icons/crystal/ci-pause.webp" alt="" width="22" height="22"></button>
+      <button type="button" class="rd-play" id="rdPlay" aria-label="Pause radar animation"><img class="ci" src="/icons/crystal/ci-pause.webp" alt="Pause icon" width="22" height="22"></button>
       <input type="range" id="rdSlider" min="0" max="0" value="0" aria-label="Radar time">
       <span class="rd-time" id="rdTime">--:--</span>
-      <button type="button" class="rd-play rd-refresh" id="rdRefresh" aria-label="Refresh radar" title="Refresh radar"><img class="ci" src="/icons/crystal/ci-refresh.webp" alt="" width="22" height="22"></button>
+      <button type="button" class="rd-play rd-refresh" id="rdRefresh" aria-label="Refresh radar" title="Refresh radar"><img class="ci" src="/icons/crystal/ci-refresh.webp" alt="Refresh icon" width="22" height="22"></button>
     </div>
     <div class="rd-credit">Radar by <a href="https://www.rainviewer.com" target="_blank" rel="noopener">RainViewer</a> · Map © <a href="https://www.esri.com" target="_blank" rel="noopener">Esri</a>, HERE, Garmin, © OpenStreetMap contributors</div>
   </section>
@@ -671,12 +671,12 @@ footer p a{display:inline-block;padding:10px 0;margin:-10px 0}
   <footer>
     <div class="fl">
       <div class="fbtns" style="display:flex;flex-wrap:wrap;gap:10px">
-        <button type="button" class="btn btn-primary" id="installBtn2" hidden><img class="ci" src="/icons/crystal/ci-install.webp" alt="" width="22" height="22"> Install app</button>
-        <button type="button" class="btn btn-ghost" id="copyLink"><img class="ci" src="/icons/crystal/ci-link.webp" alt="" width="22" height="22"> Copy forecast link</button>
-        <button type="button" class="btn btn-ghost nms-fb-btn" id="fbOpenBtn" data-nms-feedback aria-haspopup="dialog"><img class="nms-fb-ico" src="/nms-feedback/fb-ico-review.webp?v=20261111" srcset="/nms-feedback/fb-ico-review@2x.webp?v=20261111 2x" alt="" width="20" height="20"><span data-fbt="REVIEWS &amp; FEEDBACK">REVIEWS &amp; FEEDBACK</span></button>
-        <a class="btn btn-ghost" id="shareX" target="_blank" rel="noopener"><img class="ci" src="/icons/crystal/ci-x.webp" alt="" width="22" height="22"> X</a>
-        <a class="btn btn-ghost" id="shareReddit" target="_blank" rel="noopener"><img class="ci" src="/icons/crystal/ci-reddit.webp" alt="" width="22" height="22"> Reddit</a>
-        <a class="btn btn-ghost" id="shareDiscord" href="https://discord.com/app" target="_blank" rel="noopener" title="Copies your forecast, then opens Discord so you can paste it in any server or DM"><img class="ci" src="/icons/crystal/ci-discord.webp" alt="" width="22" height="22"> Discord</a>
+        <button type="button" class="btn btn-primary" id="installBtn2" hidden><img class="ci" src="/icons/crystal/ci-install.webp" alt="Install app icon" width="22" height="22"> Install app</button>
+        <button type="button" class="btn btn-ghost" id="copyLink"><img class="ci" src="/icons/crystal/ci-link.webp" alt="Copy link icon" width="22" height="22"> Copy forecast link</button>
+        <button type="button" class="btn btn-ghost nms-fb-btn" id="fbOpenBtn" data-nms-feedback aria-haspopup="dialog"><img class="nms-fb-ico" src="/nms-feedback/fb-ico-review.webp?v=20261111" srcset="/nms-feedback/fb-ico-review@2x.webp?v=20261111 2x" alt="Reviews and feedback icon" width="20" height="20"><span data-fbt="REVIEWS &amp; FEEDBACK">REVIEWS &amp; FEEDBACK</span></button>
+        <a class="btn btn-ghost" id="shareX" target="_blank" rel="noopener"><img class="ci" src="/icons/crystal/ci-x.webp" alt="X logo" width="22" height="22"> X</a>
+        <a class="btn btn-ghost" id="shareReddit" target="_blank" rel="noopener"><img class="ci" src="/icons/crystal/ci-reddit.webp" alt="Reddit logo" width="22" height="22"> Reddit</a>
+        <a class="btn btn-ghost" id="shareDiscord" href="https://discord.com/app" target="_blank" rel="noopener" title="Copies your forecast, then opens Discord so you can paste it in any server or DM"><img class="ci" src="/icons/crystal/ci-discord.webp" alt="Discord logo" width="22" height="22"> Discord</a>
       </div>
       <span class="sub">Free, no account, installs as an app.</span>
     </div>
