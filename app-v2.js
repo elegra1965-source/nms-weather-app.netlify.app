@@ -307,7 +307,7 @@
     ];
     $('hazRows').innerHTML = rows.map(function (r) {
       var hw = (r[0] === 'Toxic' && S.aqi != null) ? aqHaz(S.aqi) : hazWord(r[2]);
-      return '<div class="haz-row"><img class="haz-ic" src="' + r[3] + '" alt="" aria-hidden="true">' +
+      return '<div class="haz-row"><img class="haz-ic" src="' + r[3] + '" alt="' + r[0] + ' hazard icon">' +
         '<div style="grid-area:nm;line-height:1.2;min-width:0"><div style="font-family:var(--disp);font-size:12px;font-weight:700;letter-spacing:1.5px;color:var(--white);text-transform:uppercase">' + r[0] + '</div><div style="font-size:13.5px;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(r[1]) + '</div></div>' +
         '<div class="haz-bar"><div style="width:' + Math.max(4, r[2]) + '%;background:repeating-linear-gradient(90deg,' + hw[1] + ' 0 8px,transparent 8px 10px);box-shadow:0 0 10px ' + hw[1] + '"></div></div>' +
         '<div class="mono" style="grid-area:wd;font-size:13px;letter-spacing:1px;color:' + hw[1] + ';text-align:right">' + hw[0] + ' <span style="color:var(--text-dim)">' + r[2] + '%</span></div></div>';
@@ -503,7 +503,7 @@
       var ics = w.res.filter(function (r) { return RES[r]; }).slice(0, 3).map(function (r) { return '<img src="' + RES[r] + '" alt="' + esc(r) + '">'; }).join('');
       return '<button type="button" class="wcard" role="option" aria-selected="' + (i === S.world) + '" data-i="' + i + '">' +
         '<div class="wimg" style="background-image:url(\'' + CARD(IMGKEY[w.biome]) + '\')"><span class="n">WORLD ' + (i + 1) + '/' + S.worlds.length + '</span>' + (w.extreme ? '<span class="x"><img class="ci" src="/icons/crystal/ci-alert.webp?v=20261112" alt="Warning" width="16" height="16" style="width:16px;height:16px;margin-right:4px">EXTREME</span>' : '') +
-        '<span class="sys"><span class="sdot" style="background:' + (STAR[w.star] || '#f0c040') + ';box-shadow:0 0 8px ' + (STAR[w.star] || '#f0c040') + '"></span>' + esc(w.sys) + '</span>' + (w.discS ? '<img class="almd" src="' + esc(w.discS) + '" alt="" loading="lazy" onerror="this.remove()">' : planetSVG(w, 'almd')) + '</div>' +
+        '<span class="sys"><span class="sdot" style="background:' + (STAR[w.star] || '#f0c040') + ';box-shadow:0 0 8px ' + (STAR[w.star] || '#f0c040') + '"></span>' + esc(w.sys) + '</span>' + (w.discS ? '<img class="almd" src="' + esc(w.discS) + '" alt="' + esc(w.name || w.sys) + ' planet (NMS Almanac)" loading="lazy" onerror="this.remove()">' : planetSVG(w, 'almd')) + '</div>' +
         '<div class="wbody"><span class="nm">' + esc(w.name) + '</span><span class="bm">' + esc(biomeLine(w)) + '</span><span class="wt">' + esc(w.weather) + '</span><span class="ft"><span class="by">by ' + esc(w.by) + '</span><span class="ics">' + ics + '</span></span></div></button>';
     }).join('');
   }
@@ -525,7 +525,7 @@
       '<div class="st"><span class="s1">◈ SCANNING SURFACE…</span><span class="s2">✓ SCAN COMPLETE</span></div>' +
       '<div class="addr"><div style="display:flex;flex-wrap:wrap;gap:8px"><span style="padding:3px 10px;border-radius:6px;background:rgba(0,0,0,.7);border:1px solid rgba(240,165,0,.5);font-family:var(--disp);font-size:11px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase">' + esc(biomeLine(w)) + '</span>' + (w.extreme ? '<span class="mono" style="padding:3px 10px;border-radius:6px;background:rgba(0,0,0,.7);border:1px solid rgba(255,140,0,.6);font-size:12px;letter-spacing:1.5px;color:var(--orange)">⚠ EXTREME WEATHER</span>' : '') + '</div>' +
       '<div class="addrbox"><div class="mono" style="display:flex;justify-content:space-between;gap:16px;font-size:11px;letter-spacing:2px;color:var(--text-dim)"><span>PORTAL ADDRESS · ' + esc(w.galaxy.toUpperCase()) + '</span><span>GLYPHS + HEX</span></div><div class="glyphs">' + glyphs + '</div><div class="hex">' + w.glyph + ' <button type="button" class="copy" id="copyAddr">COPY</button></div></div></div></div>' +
-      '<div class="scan-info"><div class="sv-name">' + (w.disc ? '<img class="almdisc" src="' + esc(w.disc) + '" alt="" onerror="this.remove()">' : planetSVG(w, 'almdisc')) + '<div style="min-width:0"><div class="mono" style="font-size:12px;letter-spacing:3px;color:var(--text-dim)">FULL SCAN · WORLD ' + (i + 1) + '/' + S.worlds.length + '</div><div style="font-family:var(--disp);font-weight:800;font-size:26px;letter-spacing:1px;color:var(--white);line-height:1.2">' + esc(w.name) + '</div><div style="font-size:15px;color:rgba(207,224,240,.7)">in the <span style="color:var(--white)">' + esc(w.sys) + '</span> system · <span style="color:' + (STAR[w.star] || '#f0c040') + '">' + esc(w.star) + ' star</span> · ' + esc(w.galaxy) + '</div>' +
+      '<div class="scan-info"><div class="sv-name">' + (w.disc ? '<img class="almdisc" src="' + esc(w.disc) + '" alt="' + esc(w.name || w.sys) + ' planet (NMS Almanac)" onerror="this.remove()">' : planetSVG(w, 'almdisc')) + '<div style="min-width:0"><div class="mono" style="font-size:12px;letter-spacing:3px;color:var(--text-dim)">FULL SCAN · WORLD ' + (i + 1) + '/' + S.worlds.length + '</div><div style="font-family:var(--disp);font-weight:800;font-size:26px;letter-spacing:1px;color:var(--white);line-height:1.2">' + esc(w.name) + '</div><div style="font-size:15px;color:rgba(207,224,240,.7)">in the <span style="color:var(--white)">' + esc(w.sys) + '</span> system · <span style="color:' + (STAR[w.star] || '#f0c040') + '">' + esc(w.star) + ' star</span> · ' + esc(w.galaxy) + '</div>' +
       '<div class="sumln">' + (w.extreme ? '<span style="color:var(--orange)"><img class="ci" src="/icons/crystal/ci-alert.webp?v=20261112" alt="Warning" width="16" height="16" style="width:16px;height:16px;margin-right:4px">' + esc(w.weather) + '</span>' : esc(w.weather)) + (w.sent ? ' · <span>Sentinels:</span> <b>' + esc(w.sent) + '</b>' : '') + '</div></div></div>' +
       '<div><button type="button" class="fdbtn" id="fdBtn" aria-expanded="' + FOLD + '" aria-controls="fdBody"><span>◈ FULL SCAN DATA</span><span class="ar" aria-hidden="true">▸</span></button>' +
       '<div class="fdbody" id="fdBody"' + (FOLD ? '' : ' hidden') + '><div class="rows">' +
@@ -641,11 +641,11 @@
       if (ty < 0 || ty >= n) continue;
       for (var tx = Math.floor(tlx / 256); tx <= Math.floor((tlx + W) / 256); tx++) tiles.push([((tx % n) + n) % n, ty, Math.round(tx * 256 - tlx), Math.round(ty * 256 - tly)]);
     }
-    var esri = function (layer, t) { return '<img alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/' + layer + '/MapServer/tile/' + z + '/' + t[1] + '/' + t[0] + '" style="left:' + t[2] + 'px;top:' + t[3] + 'px">'; };
+    var esri = function (layer, t) { return '<img alt="Radar base map tile" src="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/' + layer + '/MapServer/tile/' + z + '/' + t[1] + '/' + t[0] + '" style="left:' + t[2] + 'px;top:' + t[3] + 'px">'; };
     $('rdBase').innerHTML = tiles.map(function (t) { return esri('World_Dark_Gray_Base', t); }).join('');
     $('rdLabels').innerHTML = tiles.map(function (t) { return esri('World_Dark_Gray_Reference', t); }).join('');
     $('rdRain').innerHTML = RD.frames.map(function (f, fi) {
-      return '<div class="rd-f" data-i="' + fi + '">' + tiles.map(function (t) { return '<img alt="" loading="eager" src="' + RD.host + f.path + '/256/' + z + '/' + t[0] + '/' + t[1] + '/2/1_1.png" onerror="rdTileErr(this)" style="left:' + t[2] + 'px;top:' + t[3] + 'px">'; }).join('') + '</div>';
+      return '<div class="rd-f" data-i="' + fi + '">' + tiles.map(function (t) { return '<img alt="Radar rainfall tile" loading="eager" src="' + RD.host + f.path + '/256/' + z + '/' + t[0] + '/' + t[1] + '/2/1_1.png" onerror="rdTileErr(this)" style="left:' + t[2] + 'px;top:' + t[3] + 'px">'; }).join('') + '</div>';
     }).join('');
     $('rdMsg').style.display = 'none';
     var sl = $('rdSlider'); sl.max = RD.frames.length - 1;
@@ -674,7 +674,7 @@
   function startRadar() {
     clearTimeout(RD.timer);
     var anim = RD.playing && S.fx && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    $('rdPlay').innerHTML = '<img class="ci" src="/icons/crystal/ci-' + (anim ? 'pause' : 'play-tour') + '.webp" alt="" width="22" height="22">'; $('rdPlay').setAttribute('aria-label', anim ? 'Pause radar animation' : 'Play radar animation');
+    $('rdPlay').innerHTML = '<img class="ci" src="/icons/crystal/ci-' + (anim ? 'pause' : 'play-tour') + '.webp" alt="' + (anim ? 'Pause' : 'Play') + '" width="22" height="22">'; $('rdPlay').setAttribute('aria-label', anim ? 'Pause radar animation' : 'Play radar animation');
     if (!anim || RD.frames.length < 2) return;
     (function step() {
       var last = RD.i >= RD.frames.length - 1;
