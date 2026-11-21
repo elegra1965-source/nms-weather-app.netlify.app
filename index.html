@@ -112,7 +112,7 @@ img{max-width:100%}
 .brand{display:flex;align-items:center;gap:14px;text-decoration:none;flex:0 0 auto;max-width:100%}
 .mark{position:relative;width:48px;height:48px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
 .mark::before{content:"";position:absolute;inset:0;border-radius:50%;border:1px solid rgba(0,229,255,.45);animation:markPulse 2.6s ease-out infinite}
-.mark img{width:48px;height:48px;object-fit:contain;animation:markGlow 2.6s ease-in-out infinite}
+.mark img{width:48px;height:48px;object-fit:contain;border-radius:50%;animation:markGlow 2.6s ease-in-out infinite}
 .brand-name{font-family:var(--disp);font-weight:800;font-size:15px;letter-spacing:2px;color:var(--white);text-transform:uppercase;display:block}
 .brand-clock{font-family:var(--mono);font-size:12px;letter-spacing:2px;color:var(--text-dim);white-space:nowrap;display:block}
 /* 2026-10-24: name + clock were wider than a 320px phone (and Polish 'LOKALNIE' at 360), giving sideways scroll */
@@ -151,7 +151,7 @@ img{max-width:100%}
 .al-t{display:block;font-family:var(--disp);font-size:12px;font-weight:700;letter-spacing:1px;color:var(--white)}
 .al-d{display:block;font-size:14px;color:rgba(207,224,240,.65);line-height:1.35}
 .notif{padding:12px 14px;border-radius:14px;background:rgba(30,38,50,.92);border:1px solid rgba(255,255,255,.1);box-shadow:0 12px 30px rgba(0,0,0,.5);display:flex;gap:12px;align-items:flex-start}
-.notif img{width:36px;height:36px;flex-shrink:0}
+.notif img{width:36px;height:36px;flex-shrink:0;border-radius:50%}
 .notif .h{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:var(--text-dim)}
 .notif b{display:block;font-size:15px;color:var(--white)}
 .notif p{margin:0;font-size:14px;line-height:1.4}
