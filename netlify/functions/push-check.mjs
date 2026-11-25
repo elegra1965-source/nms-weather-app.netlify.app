@@ -51,7 +51,15 @@ export default async () => {
   // expedition dates from the NMS wiki, once per run (only if someone wants expedition alerts)
   let expRows = null;
   if (subs.some(s => s.rec.prefs && (s.rec.prefs.expNew || s.rec.prefs.expEnd))) {
+    // first choice: the shared schedule (built from Hello Games' own news, checked every 3 hours and every 10 minutes on Wednesdays)
     try {
+      const r = await fetch('https://map.nomansskyhub.app/.netlify/functions/expedition', { signal: AbortSignal.timeout(10000) });
+      const j = r.ok ? await r.json() : null;
+      if (j && j.ok && Array.isArray(j.runs) && j.runs.length) {
+        expRows = j.runs.filter(x => x && x.title && x.start).map(x => ({ num: x.num || 0, title: x.title, start: x.start, end: x.end || null })).sort((a, b) => a.num - b.num || a.start - b.start);
+      }
+    } catch (e) { console.log('push-check: shared schedule failed', e.message); }
+    if (!expRows || !expRows.length) try {
       const r = await fetch('https://nomanssky.fandom.com/api.php?action=parse&page=List_of_Expeditions&prop=wikitext&format=json', { signal: AbortSignal.timeout(10000), headers: { 'user-agent': 'AtlasWeatherStation/1.0 (+https://weather.nomansskyhub.app)' } });
       if (r.ok) { const j = await r.json(); expRows = parseWikiExpeditions(j && j.parse && j.parse.wikitext && j.parse.wikitext['*']); }
     } catch (e) { console.log('push-check: wiki failed', e.message); }
